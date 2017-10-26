@@ -19,11 +19,11 @@ moon.config(function($routeProvider, $locationProvider) {
         controller: 'PeruseController as ctrl'
     })
     .when('/s/:setter/:page?', {
-        templateUrl: 'partials/setter.html',
+        templateUrl: 'partials/peruse.html',
         controller: 'SetterController as ctrl'
     })
     .when('/st/:setter/:page?', {
-        templateUrl: 'partials/setter.html',
+        templateUrl: 'partials/peruse.html',
         controller: 'SetterController as ctrl'
     })
     .when('/:problem', {
