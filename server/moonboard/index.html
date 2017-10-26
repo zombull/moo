@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>moon</title>
+
+        <base href="http://moon.zombull.xyz:3000/">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>[ng-cloak] { display: none; }</style>
+
+        <link rel="shortcut icon" type="image/x-icon" href="favicon/favicon.ico" id="favicon">
+        <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+        <link rel="manifest" href="favicon/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic,500italic">
+        <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.css">
+
+        <!-- inject:css -->
+        <link rel="stylesheet" href="static/css/style.css">
+        <link rel="stylesheet" href="common/css/v5_bloques/v5_bloques.css">
+        <!-- endinject -->
+    </head>
+    <body ng-app="moon">
+        <div layout="column" tabindex="-1" role="main" flex id="main">
+
+            <md-toolbar class="site-content-toolbar md-default-theme" ng-cloak>
+                <div layout="row" flex class"fill-height">
+                    <h2 layout-margin hide-sm class="md-toolbar-item md-headline"><a id="index" href="/">MOON</a></h2>
+
+                    <span flex hide-sm></span>
+
+                    <div layout-margin flex class="md-toolbar-item" ng-controller="SearchController as ctrl">
+                        <md-autocomplete md-input-id="search" placeholder="Click or press / to search!"
+                            md-selected-item="ctrl.selectedItem"
+                            md-selected-item-change="ctrl.selectedItemChange(item)"
+                            md-search-text="ctrl.searchText"
+                            md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
+                            md-items="item in ctrl.search(ctrl.searchText)"
+                            md-item-text="item.n"
+                            md-autoselect="true"
+                            md-no-cache="true"
+                            md-min-length="0"
+                            md-delay="0">
+                            <md-item-template>
+                                <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i" style="float:left;">{{item.n}}</span><span style="float:right;">{{item.meta}}</span>
+                            </md-item-template>
+                            <md-not-found>"{{ctrl.searchText}}" did not yield any results.</md-not-found>
+                        </md-autocomplete>
+                    </div>
+                </div>
+            </md-toolbar>
+
+            <ng-view autoscroll></ng-view>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-animate.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-route.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-aria.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-messages.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-sanitize.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/lodash/3.10.1/lodash.min.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+        
+        <!-- inject:js -->
+        <script src="static/js/app.js"></script>
+        <script src="static/js/components/problemInfo.js"></script>
+        <script src="static/js/config/routes.js"></script>
+        <script src="static/js/config/theme.js"></script>
+        <script src="static/js/controllers/404.js"></script>
+        <script src="static/js/controllers/atc.js"></script>
+        <script src="static/js/controllers/peruse.js"></script>
+        <script src="static/js/controllers/problem.js"></script>
+        <script src="static/js/controllers/setter.js"></script>
+        <script src="static/js/services/database.js"></script>
+        <script src="static/js/services/inspector.js"></script>
+        <script src="static/js/services/moonboard.js"></script>
+        <script src="static/js/services/problems.js"></script>
+        <script src="static/js/services/schema.js"></script>
+        <script src="common/js/controllers/search.js"></script>
+        <script src="common/js/filters/linkify.js"></script>
+        <script src="common/js/services/bug.js"></script>
+        <script src="common/js/services/calculator.js"></script>
+        <script src="common/js/services/grades.js"></script>
+        <script src="common/js/services/storage.js"></script>
+        <script src="common/js/services/truthiness.js"></script>
+        <!-- endinject -->
+    </body>
+</html>
+
+

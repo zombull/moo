@@ -1,0 +1,26 @@
+<md-content layout="row" layout-sm="column" layout-align="center" flex class="md-default-theme" ng-cloak>
+    <div flex ng-if="!error" style="padding-top:20px;">
+        <canvas id="problemCanvas" width="427" height="657"></canvas>
+    </div>
+    <span flex="10"  ng-if="!error" hide-sm></span>
+    <div flex ng-if="problem && !error">
+        <problem-info problem="problem" setter="setter"></problem-info>
+
+        <md-subheader class="md-no-sticky md-accent" ng-cloak>
+            <h2><a  class="inv" ng-href="{{::setter.u}}">{{::setter.n}}<span ng-if="setter.k">&nbsp;({{::setter.k}})</span></a></h2>
+            <md-divider></md-divider><br>
+            <div>
+                <div ng-repeat="p in ::suggested.setter track by p.u" ng-bind-html="::p | linkify"></div>
+            </div>
+        </md-subheader>
+
+        <md-subheader class="md-no-sticky md-accent" ng-cloak>
+            <h2><a class="inv" ng-href="/p/{{::problem.g}}">{{::problem.g}}s</a></h2>
+            <md-divider></md-divider><br>
+            <div>
+                <div ng-repeat="p in ::suggested.grade track by p.u" ng-bind-html="::p | linkify"></div>
+            </div>
+        </md-subheader>
+    </div>
+    <div class="layout" ng-if="error" ng-include="'partials/error.html'"></div>
+</md-content>

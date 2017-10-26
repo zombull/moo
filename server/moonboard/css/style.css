@@ -1,0 +1,105 @@
+html {
+    font-size: 15px;
+    letter-spacing: 0.010em;
+}
+
+body{
+    overflow-y: scroll;
+}
+
+#main {
+    max-width: 864px;
+    padding: 0;
+    margin: 0 auto;
+    width: auto;
+}
+
+#index {
+    color: black;
+}
+
+.md-headline {
+    font-family: 'V5 Bloques', Roboto, 'Helvetica Neue', sans-serif;
+    font-size: 48px;
+    line-height: 48px;
+}
+
+.atc-link {
+    font-family: 'V5 Bloques', Roboto, 'Helvetica Neue', sans-serif;
+    font-size: 28px;
+    line-height: 28px;
+    letter-spacing: 0.080em;
+}
+
+@media screen and (max-width: 960px) {
+    #problemCanvasContainer {
+        text-align: center;
+    }
+}
+
+.md-button {
+    min-width: 56px;
+}
+
+h2 {
+    font-size: 1.4rem;
+    line-height: 1.1em;
+}
+
+h3 {
+    font-size: 1.25rem;
+    line-height: 1.1em;
+}
+
+.md-subheader {
+    font-size: 1.0rem;
+    line-height: 1.25em;
+}
+
+.md-subheader .md-subheader-inner {
+    padding: 0 0 16px 16px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:not(#index):not(.inv), a.inv:hover {
+    color: #00EFDE;
+    /* color: rgb(3,169,244); crux */
+}
+
+a.inv, a:not(#index):not(.inv):hover, #index:hover {
+    color: #FF3900;
+    /* color: rgb(255,110,64); // crux */
+}
+
+.md-subheader-content > div, td {
+    color: rgba(0, 0, 0, 0.87);
+    padding-right: 2em;
+}
+
+.atc h2, .atc h3 {
+    margin-bottom: .5em;
+}
+
+.atc .md-subheader-inner {
+    padding-bottom: .5em;
+}
+
+/* .atc .md-subheader-content :not(h2):not(h3) {
+    color: rgba(0, 0, 0, 0.87);
+    margin-top: 0;
+} */
+
+/* .atc .md-subheader-content {
+    font-weight: 400;
+} */
+
+.atc pre {
+    display: inline;
+}
+
+.atc p code {
+    background: rgba(0, 0, 0, 0.0666);
+}

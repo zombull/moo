@@ -1,0 +1,68 @@
+<md-content layout-align="center" flex class="md-default-theme" ng-cloak>
+    <div class="atc" ng-if="!error">
+        <md-subheader class="md-no-sticky md-accent" ng-cloak>
+            <div layout="column" flex class"fill-height">
+                <div layout="row" layout-sm="column" flex class"fill-height">
+                        <h2 class="atc-link"><a href="/p/all">PROBLEMS</a></h2>
+                        <span flex show-gt-sm></span>
+                        <div layout="column" flex class"fill-height">
+                            <div layout="row" flex class"fill-height">
+                                    <h2 class="atc-link"><a href="/p/v4">v4</a>&nbsp;</h2>
+                                    <h2 class="atc-link"><a href="/p/v5">v5</a>&nbsp;</h2>
+                                    <h2 class="atc-link"><a href="/p/v6">v6</a>&nbsp;</h2>
+                            </div>
+                            <div layout="row" flex>
+                                <h1 class="atc-link"><a href="/p/v7">v7</a>&nbsp;</h2>
+                                <h1 class="atc-link"><a href="/p/v8">v8</a>&nbsp;</h2>
+                                <h1 class="atc-link"><a href="/p/v9">v9</a>&nbsp;</h2>
+                            </div>
+                        </div>
+                </div>
+                <br>
+                <div layout="row" layout-sm="column" flex class"fill-height">
+                        <h2 class="atc-link"><a href="/t/all">TICKS</a></h2>
+                        <span flex show-gt-sm></span>
+                        <div layout="column" flex class"fill-height">
+                            <div layout="row" flex class"fill-height">
+                                    <h2 class="atc-link"><a href="/t/v4">v4</a>&nbsp;</h2>
+                                    <h2 class="atc-link"><a href="/t/v5">v5</a>&nbsp;</h2>
+                                    <h2 class="atc-link"><a href="/t/v6">v6</a>&nbsp;</h2>
+                            </div>
+                            <div layout="row" flex class"fill-height">
+                                <h2 class="atc-link"><a href="/t/v7">v7</a>&nbsp;</h2>
+                                <h2 class="atc-link"><a href="/t/v8">v8</a>&nbsp;</h2>
+                                <h2 class="atc-link"><a href="/t/v9">v9</a>&nbsp;</h2>
+                            </div>
+                        </div>
+                </div>
+                <br>
+                <h2 class="atc-link"><a href="/s/all">SETTERS</a></h2>
+                <br>
+            </div>
+
+            <h3>Search Commands</h3>
+            <md-divider></md-divider><br>
+            <table cellpadding="0" cellspacing="6">
+                <tbody>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>/</strong>&nbsp;&nbsp;</pre></td><td>Activate the search bar if it's not currently focused.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@b | !b</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide only benchmark problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@t | !t</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide only ticked problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@y | !y $setter</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide only problems set by $setter.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@e</strong>&nbsp;&nbsp;</pre></td><td>Search setters instead of problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@ | = $grade</strong>&nbsp;&nbsp;</pre></td><td>Show only problems matching $grade, e.g. @v5.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>&lt;$grade</strong>&nbsp;&nbsp;</pre></td><td>Show only problems no harder than $grade.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>&gt;$grade</strong>&nbsp;&nbsp;</pre></td><td>Show only problems at least as hard as the $grade.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@a | a= $ascents</strong>&nbsp;&nbsp;</pre></td><td>Show only problems with # of $ascents.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>a&lt;$ascents</strong>&nbsp;&nbsp;</pre></td><td>Show only problems with fewer than # $ascents.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>a&gt;$ascents</strong>&nbsp;&nbsp;</pre></td><td>Show only problems with at least # $ascents.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>@s | s= $stars</strong>&nbsp;&nbsp;</pre></td><td>Show only problems with # of $stars.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>s&lt;$stars</strong>&nbsp;&nbsp;</pre></td><td>Show only problems with fewer than # $stars.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>s&gt;$stars</strong>&nbsp;&nbsp;</pre></td><td>Show only problems with at least # $stars.</td>
+                </tbody>
+            </table>
+        </md-subheader>
+
+        <br><br><br><br><br><br>
+    </div>
+    <div class="layout" ng-if="error" ng-include="'partials/error.html'"></div>
+</md-content>

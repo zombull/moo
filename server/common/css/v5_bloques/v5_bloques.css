@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'V5 Bloques';
+    src: url('v5_bloques.eot');
+    src: url('v5_bloques.eot?#iefix') format('embedded-opentype'),
+         url('v5_bloques.woff2') format('woff2'),
+         url('v5_bloques.woff') format('woff'),
+         url('v5_bloques.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
