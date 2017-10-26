@@ -5,11 +5,11 @@
     <span flex ng-if="!error" show-gt-sm></span>
     <div ng-if="problem && !error" style="padding-top:15px;">
         <md-content layout="row" layout-align="center" ng-cloak>
-            <md-button class="md-raised" ng-click="ppage($event)">&lt;&lt;</md-button>
-            <md-button class="md-raised" ng-click="prev($event)">&lt;</md-button>
-            <md-button class="md-raised" ng-click="rand($event)">?</md-button>
-            <md-button class="md-raised" ng-click="next($event)">&gt;</md-button>
-            <md-button class="md-raised" ng-click="npage($event)">&gt;&gt;</md-button>
+            <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="ppage($event)">&lt;&lt;</md-button>
+            <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="prev($event)">&lt;</md-button>
+            <md-button class="md-raised md-accent" ng-click="rand($event)">?</md-button>
+            <md-button class="md-raised md-accent" ng-disabled="i==count-1" ng-click="next($event)">&gt;</md-button>
+            <md-button class="md-raised md-accent" ng-disabled="i==count-1" ng-click="npage($event)">&gt;&gt;</md-button>
         </md-content>
 
         <problem-info problem="problem" setter="setter"></problem-info>

@@ -37,8 +37,15 @@ body{
     }
 }
 
-.md-button {
+.md-button.md-accent.md-raised {
     min-width: 56px;
+    min-height: 40px;
+    background-color: rgba(255,57,0,0.7);
+    border-radius: 7px;
+}
+
+.md-button.md-accent.md-raised:disabled {
+    cursor: default;
 }
 
 h2 {
