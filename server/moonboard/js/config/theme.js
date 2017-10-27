@@ -12,5 +12,5 @@ moon.config(function($mdThemingProvider) {
 
     $mdThemingProvider.theme('default')
         .primaryPalette('lightBlue')
-        .accentPalette('deepOrange')
+        .accentPalette('deepOrange');
 });
