@@ -102,9 +102,18 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
             $scope.attempts = shadow.attempts;
             $scope.sessions = shadow.sessions;
         } else {
-            // TODO: add confirmation
-            $scope.attempts = shadow.attempts = 0;
-            $scope.sessions = shadow.sessions = 0;
+            $mdDialog.show({
+                targetEvent: event,
+                controller: 'ConfirmController',
+                controllerAs: 'ctrl',
+                locals: { prompt: 'Nuke attempts and sessions?', buttons: { cancel: '2620', confirm: '2694' } },
+                ariaLabel: 'confirm-dialog',
+                templateUrl: 'common/html/confirm.html',
+                clickOutsideToClose: true,
+            }).then(function(source) {
+                    $scope.attempts = shadow.attempts = 0;
+                    $scope.sessions = shadow.sessions = 0;
+            }).catch(function() {});
         }
     };
 });

@@ -79,6 +79,10 @@ h3 {
     padding: 0 0 16px 16px;
 }
 
+#prompt {
+    color: rgba(0, 0, 0, 0.666);
+}
+
 a {
     text-decoration: none;
 }
@@ -93,7 +97,7 @@ a.inv, a:not(#index):not(.inv):hover, #index:hover {
     /* color: rgb(255,110,64); // crux */
 }
 
-.md-subheader-content > div, td {
+td {
     color: rgba(0, 0, 0, 0.87);
     padding-right: 2em;
 }
@@ -105,15 +109,6 @@ a.inv, a:not(#index):not(.inv):hover, #index:hover {
 .atc .md-subheader-inner {
     padding-bottom: .5em;
 }
-
-/* .atc .md-subheader-content :not(h2):not(h3) {
-    color: rgba(0, 0, 0, 0.87);
-    margin-top: 0;
-} */
-
-/* .atc .md-subheader-content {
-    font-weight: 400;
-} */
 
 .atc pre {
     display: inline;

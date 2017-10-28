@@ -1,0 +1,11 @@
+<md-dialog layout="column" layout-align="center center">
+    <md-subheader class="md-no-sticky md-accent">
+        <h2><div id="prompt">{{::prompt}}</div></h2>
+    </md-subheader>
+    
+    <div layout="row" layout-align="end" flex>
+        <md-button id="cancel" class="md-raised md-accent" ng-click="cancel()" ng-bind-html="buttons.cancel | unicode" aria-label="cancel"></md-button>
+        <div style="min-width: 36px"></div>
+        <md-button class="md-raised md-accent" ng-click="confirm()" ng-bind-html="buttons.confirm | unicode" aria-label="confirm"></md-button>
+    </div>
+ </md-dialog>
