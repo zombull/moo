@@ -31,16 +31,9 @@ func (s *Server) commonRoutes(e *echo.Echo, h string) {
 
 	// // Send back the main HTML page when accessing a front facing URL.
 	e.File("/", path.Join(s.dir, h, "index.html"))
-	e.GET("/partials/:name", s.partialsRoute(h))
 
 	e.GET("/data/master", s.store.getInternal(h))
 	e.GET("/data/ticks", s.store.getTicks(h))
-}
-
-func (s *Server) partialsRoute(h string) func(echo.Context) error {
-	return func(c echo.Context) error {
-		return c.File(path.Join(s.dir, h, "partials", c.Param("name")))
-	}
 }
 
 func (s *Server) Log(port string) {
