@@ -111,8 +111,9 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
                 templateUrl: 'common/html/confirm.html',
                 clickOutsideToClose: true,
             }).then(function(source) {
-                    $scope.attempts = shadow.attempts = 0;
-                    $scope.sessions = shadow.sessions = 0;
+                $scope.attempts = shadow.attempts = 0;
+                $scope.sessions = shadow.sessions = 0;
+                database.project.rm($routeParams.problem, $scope);
             }).catch(function() {});
         }
     };

@@ -53,6 +53,9 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                     } else if (tocks && tocks.hasOwnProperty(problem.u)) {
                         problem.t = tocks[problem.u];
                     }
+                    if (problem.t && projects && projects.hasOwnProperty(problem.u)) {
+                        delete projects[problem.u];
+                    }
                     problem.g = problem.t ? problem.t.g : problem.g;
                     problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
                     problem.v = grades.convert(problem.g);
@@ -63,6 +66,9 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
             });
             if (tocks) {
                 storage.set('tocks', tocks);
+            }
+            if (projects) {
+                storage.set('projects', projects);
             }
             storage.set('master', data);
         }
@@ -119,6 +125,14 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                     storage.set('projects', data.projects);
                 });
             },
+            rm: function(problem, scope) {
+                getData(scope, function(data) {
+                    if (data.projects.hasOwnProperty(problem)) {
+                        delete data.projects[problem];
+                        storage.set('projects', data.projects);
+                    }
+                });
+            }
         },
         tock: {
             add: function(tock, scope, callback) {
@@ -130,6 +144,12 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                             bug.on(!data.p.hasOwnProperty(tock.p));
                             var problem = data.i[data.p[tock.p]];
                             bug.on(problem.t !== null);
+
+                            if (data.projects.hasOwnProperty(tock.p)) {
+                                delete data.projects[tock.p];
+                                storage.set('projects', data.projects);
+                            }
+
                             problem.t = tock;
                             problem.g = tock.g
                             problem.s = tock.s;
