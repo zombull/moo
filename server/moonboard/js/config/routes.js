@@ -22,6 +22,10 @@ moon.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/html/peruse.html',
         controller: 'PeruseController as ctrl'
     })
+    .when('/j/:grade/:page?', {
+        templateUrl: 'static/html/peruse.html',
+        controller: 'PeruseController as ctrl'
+    })
     .when('/s/:setter/:page?', {
         templateUrl: 'static/html/peruse.html',
         controller: 'SetterController as ctrl'

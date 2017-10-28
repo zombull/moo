@@ -2,7 +2,7 @@
 /**
  *
  */
-moon.controller('PeruseController', function PeruseController($scope, $location, $routeParams, moonboard, database, problems) {
+moon.controller('PeruseController', function PeruseController($scope, $location, $routeParams, moonboard, database, problems, bug) {
     'use strict';
 
     problems.reset();
@@ -13,8 +13,10 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     var __data = {}; // The global data list, needed to retrieve setter info.
     var __problems = []; // Local list used as the source for problems.
     var perpage = 15;
-    var showTicks = ($location.path().split('/')[1].toLowerCase() !== 'p');
-    var showTocks = ($location.path().split('/')[1].toLowerCase() === 'k');
+    var rp = $location.path().split('/')[1].toLowerCase();
+    var showTicks = (rp === 't' || rp === 'k');
+    var showTocks = (rp === 'k');
+    var showProjects = (rp === 'j');
 
     if ($routeParams.page) {
         var page = parseInt($routeParams.page);
@@ -39,13 +41,23 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     database.all(function(data) {
         __data = data;
 
-        // Build the master list of all problems for the current grade.
-        __problems = _.slice(data.i, 0, _.size(data.p)).filter(function(problem) {
-            return  (!grade || problem.g === grade) && (!showTicks == !problem.t) && (!showTocks || problem.t.hasOwnProperty('p'));
-        });
+        if (showProjects) {
+            _.each(data.projects, function(v, k) {
+                bug.on(!data.p.hasOwnProperty(k));
+                var problem = data.i[data.p[k]];
+                if (!grade || problem.g === grade) {
+                    __problems.push(problem);
+                }
+            });
+        } else {
+            __problems = _.slice(data.i, 0, _.size(data.p)).filter(function(problem) {
+                return  (!grade || problem.g === grade) && (!showTicks == !problem.t) && (!showTocks || problem.t.hasOwnProperty('p'));
+            });
+        }
+
         if (__problems.length === 0) {
             var meta = $routeParams.grade === 'all' ? '' : $routeParams.grade + ' ';
-            var type = showTocks ? 'tocks' : showTicks ? 'ticks' : 'problems';
+            var type = showProjects ? 'projects' : showTocks ? 'tocks' : showTicks ? 'ticks' : 'problems';
             $scope.error = $scope.error || { status: 404, data: 'Did not find any {0}{1}.'.format(meta, type) };
             return;
         }

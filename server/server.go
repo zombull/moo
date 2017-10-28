@@ -61,7 +61,7 @@ func (s *Server) Run(port string) {
 	moon := echo.New()
 	s.commonRoutes(moon, "moonboard")
 	moon.File("/:problem", path.Join(s.dir, "moonboard", "index.html"))
-	for _, r := range []string{"/p/:grade", "/t/:grade", "/k/:grade", "/s/:setter", "/st/:setter"} {
+	for _, r := range []string{"/p/:grade", "/t/:grade", "/k/:grade", "/j/:grade", "/s/:setter", "/st/:setter"} {
 		moon.File(r, path.Join(s.dir, "moonboard", "index.html"))
 	}
 
