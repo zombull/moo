@@ -3,11 +3,11 @@
         <canvas id="problemCanvas" width="427" height="657"></canvas>
     </div>
     <span flex ng-if="!error" show-gt-sm></span>
-    <div ng-if="problem && !error" style="padding-top:15px;">
+    <div ng-if="problem && !error" style="padding-top:15px;min-width:360px;">
         <md-content layout="row" layout-align="center" ng-cloak>
             <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="ppage($event)">&#x2B9C;</md-button>
             <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="ppage($event)">&#x2B98;</md-button>
-            <md-button class="md-raised md-accent rand" ng-click="rand($event)">&#x2618;</md-button>
+            <md-button class="md-raised md-accent big" ng-click="rand($event)">&#x2618;</md-button>
             <md-button class="md-raised md-accent" ng-disabled="i==count-1" ng-click="next($event)">&#x2B9A;</md-button>
             <md-button class="md-raised md-accent" ng-disabled="i==count-1" ng-click="npage($event)">&#x2B9E;</md-button>
         </md-content>

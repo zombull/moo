@@ -11,11 +11,8 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
         if (sum !== schema.checksums[key]) {
             storage.update(key);
             update = true;
-        } else {
-            storage.get(key, function() { });
         }
     });
-
 
     function getStorage(callback, data, error) {
         if (error) {
@@ -27,28 +24,32 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
 
     storage.get('master', getStorage.bind(this, function(data) {
         storage.get('ticks', getStorage.bind(this, function(ticks) {
-            if (!data.hasOwnProperty('g') || update) {
-                data.g = []
-                for (var g = 0; g < 18; g++) {
-                    data.g[g] = [];
-                }                
-                // Unpack difficulty and tick info into problems, then update
-                // storage.
-                var end = _.size(data.p);
-                _.each(data.i, function(problem, i) {
-                    if (i < end) {
-                        problem.t = ticks.hasOwnProperty(i) ? ticks[i] : null;
-                        problem.g = problem.t ? problem.t.g : problem.g;
-                        problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
-                        problem.v = grades.convert(problem.g);
-
-                        bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
-                        data.g[problem.v/10].push(i);
+            storage.get('projects', getStorage.bind(this, function(projects) {
+                if (!data.hasOwnProperty('g') || update) {
+                    data.g = []
+                    for (var g = 0; g < 18; g++) {
+                        data.g[g] = [];
                     }
-                });
-            }
-            storage.set('master', data);
-            __data.resolve(data);
+                    // Unpack difficulty and tick info into problems, then update
+                    // storage.
+                    var end = _.size(data.p);
+                    _.each(data.i, function(problem, i) {
+                        if (i < end) {
+                            problem.t = ticks.hasOwnProperty(i) ? ticks[i] : null;
+                            problem.g = problem.t ? problem.t.g : problem.g;
+                            problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
+                            problem.v = grades.convert(problem.g);
+
+                            bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
+                            data.g[problem.v/10].push(i);
+                        }
+                    });
+                    storage.set('master', data);
+                }
+
+                data.projects = projects || {};
+                __data.resolve(data);
+            }));
         }));
     }));
 
@@ -82,6 +83,24 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
             getData(scope, function(data) {
                 callback(data.s);
             });
+        },
+        project: {
+            get: function(problem, scope, callback) {
+                getData(scope, function(data) {
+                    if (data.projects.hasOwnProperty(problem)) {
+                        callback(data.projects[problem]);
+                    } else {
+                        callback(null);
+                    }
+                });
+            },
+            set: function(problem, project, scope) {
+                getData(scope, function(data) {
+                    bug.on(!data.p.hasOwnProperty(problem));
+                    data.projects[problem] = project;
+                    storage.set('projects', data.projects);
+                });
+            },
         }
     };
 });

@@ -46,9 +46,14 @@ body{
     border-radius: 7px;
 }
 
-.md-button.md-accent.md-raised.rand {
+.md-button.md-accent.md-raised.big {
     font-size: 24px;
     line-height: 24px;
+}
+
+.md-button.md-accent.md-raised.bigger {
+    font-size: 28px;
+    line-height: 28px;
 }
 
 .md-button.md-accent.md-raised:disabled {
