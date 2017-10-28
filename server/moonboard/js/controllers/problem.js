@@ -90,7 +90,7 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
             controllerAs: 'ctrl',
             locals: { problem: $scope.problem, attempts: $scope.attempts || 1, sessions: $scope.sessions || 1 },
             ariaLabel: 'tick-dialog',
-            templateUrl: 'static/partials/tick.html',
+            templateUrl: 'static/html/tick.html',
             clickOutsideToClose: true,
         });
     };

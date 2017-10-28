@@ -1,5 +1,5 @@
 moon.component('problemInfo', {
-    templateUrl: 'static/partials/problemInfo.html',
+    templateUrl: 'static/html/problemInfo.html',
     bindings: {
         problem: '=',
         setter: '=',

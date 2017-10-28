@@ -7,15 +7,15 @@ moon.config(function($routeProvider, $locationProvider) {
     $routeProvider.caseInsensitiveMatch = true;
     $routeProvider
     .when('/', {
-        templateUrl: 'static/partials/atc.html',
+        templateUrl: 'static/html/atc.html',
         controller: 'AirTrafficController as ctrl'
     })
     .when('/p/:grade/:page?', {
-        templateUrl: 'static/partials/peruse.html',
+        templateUrl: 'static/html/peruse.html',
         controller: 'PeruseController as ctrl'
     })
     .when('/t/:grade/:page?', {
-        templateUrl: 'static/partials/peruse.html',
+        templateUrl: 'static/html/peruse.html',
         controller: 'PeruseController as ctrl'
     })
     .when('/k/:grade/:page?', {
@@ -23,19 +23,19 @@ moon.config(function($routeProvider, $locationProvider) {
         controller: 'PeruseController as ctrl'
     })
     .when('/s/:setter/:page?', {
-        templateUrl: 'static/partials/peruse.html',
+        templateUrl: 'static/html/peruse.html',
         controller: 'SetterController as ctrl'
     })
     .when('/st/:setter/:page?', {
-        templateUrl: 'static/partials/peruse.html',
+        templateUrl: 'static/html/peruse.html',
         controller: 'SetterController as ctrl'
     })
     .when('/:problem', {
-        templateUrl: 'static/partials/problem.html',
+        templateUrl: 'static/html/problem.html',
         controller: 'ProblemController as ctrl'
     })
     .otherwise({
-        templateUrl: 'static/partials/404.html',
+        templateUrl: 'static/html/404.html',
         controller: '404Controller as ctrl'
     });
 
