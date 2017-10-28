@@ -3,11 +3,13 @@ host.factory('bug', function () {
 
     return {
         bug: function(message) {
-            throw message;
+            console.trace();
+            console.log(message);
         },
         on: function(condition, message) {
             if (condition) {
-                throw message;
+                console.trace();
+                console.log(message);
             }
         }
     };
