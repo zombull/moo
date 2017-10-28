@@ -166,7 +166,6 @@ type moonData struct {
 }
 
 type moonTick struct {
-	Problem  int    `json:"p"`
 	Date     string `json:"d"`
 	Grade    string `json:"g"`
 	Stars    uint   `json:"s"`
@@ -296,7 +295,6 @@ func (s *KeyValueStore) update(d *database.Database) {
 		t := d.GetTicks(r.Id)
 		if len(t) > 0 {
 			mt := moonTick{
-				Problem:  i,
 				Date:     t[0].Date.Format("January 02, 2006"),
 				Grade:    t[0].Grade,
 				Stars:    t[0].Stars,
