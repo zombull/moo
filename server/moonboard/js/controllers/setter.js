@@ -2,7 +2,7 @@
 /**
  *
  */
-moon.controller('SetterController', function SetterController($scope, $location, $routeParams, moonboard, database, problems) {
+moon.controller('SetterController', function SetterController($scope, $location, $routeParams, moonboard, database, problems, bug) {
     'use strict';
 
     problems.reset();
@@ -30,16 +30,20 @@ moon.controller('SetterController', function SetterController($scope, $location,
             return;
         }
 
-        $scope.setter = data.i[data.s[skey]];
+        var setter = data.i[data.s[skey]];
+        $scope.setter = _.pick(setter, ['u', 'n']);
+        if (!showTicks) {
+            $scope.setter.u = 'st/' + $routeParams.setter.toLowerCase();
+        }
 
-        _.each($scope.setter.p, function(i) {
+        _.each(setter.p, function(i) {
             if (!showTicks == !data.i[i].t) {
                 __problems.push(data.i[i]);
             }
         });
         if (__problems.length === 0) {
             bug.on(!showTicks);
-            $scope.error = $scope.error || { status: 404, data: 'Did not find any ticked problems set by ' + $routeParams.setter + '.' };
+            $scope.error = $scope.error || { status: 404, data: 'Did not find any ticked problems set by {0}.'.format(setter.n) };
             return;
         }
         problems.set(__problems);
