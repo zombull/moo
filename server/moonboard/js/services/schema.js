@@ -10,7 +10,7 @@ moon.factory('schema', function () {
         tocks: { local: true, ephemeral: true },
         projects: { local: true, ephemeral: true }
     };
-    var checksums = { master: 'fa707ba5523acd49afaa244f7453fb38', ticks: '061b88ba97ac432d2bef39bf70b965c8' };
+    var checksums = { master: 'fa707ba5523acd49afaa244f7453fb38', ticks: '4c9399e05de09d571ba02dda7158337c' };
 
     return {
         requests: requests,
