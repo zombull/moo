@@ -22,36 +22,54 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
         }
     }
 
-    storage.get('master', getStorage.bind(this, function(data) {
-        storage.get('ticks', getStorage.bind(this, function(ticks) {
-            storage.get('projects', getStorage.bind(this, function(projects) {
-                if (!data.hasOwnProperty('g') || update) {
-                    data.g = []
-                    for (var g = 0; g < 18; g++) {
-                        data.g[g] = [];
-                    }
-                    // Unpack difficulty and tick info into problems, then update
-                    // storage.
-                    var end = _.size(data.p);
-                    _.each(data.i, function(problem, i) {
-                        if (i < end) {
-                            problem.t = ticks.hasOwnProperty(i) ? ticks[i] : null;
-                            problem.g = problem.t ? problem.t.g : problem.g;
-                            problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
-                            problem.v = grades.convert(problem.g);
-
-                            bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
-                            data.g[problem.v/10].push(i);
-                        }
-                    });
-                    storage.set('master', data);
-                }
-
-                data.projects = projects || {};
-                __data.resolve(data);
+    function getEverything(callback) {
+        storage.get('master', getStorage.bind(this, function(data) {
+            storage.get('ticks', getStorage.bind(this, function(ticks) {
+                storage.get('tocks', getStorage.bind(this, function(tocks) {
+                    storage.get('projects', getStorage.bind(this, function(projects) {
+                        callback(data, ticks, tocks, projects);
+                    }));
+                }));
             }));
         }));
-    }));
+    }
+
+    getEverything(function(data, ticks, tocks, projects){
+        if (!data.hasOwnProperty('g') || update) {
+            data.g = []
+            for (var g = 0; g < 18; g++) {
+                data.g[g] = [];
+            }
+
+            var end = _.size(data.p);
+            _.each(data.i, function(problem, i) {
+                if (i < end) {
+                    problem.t = null;
+                    if (ticks.hasOwnProperty(i)) {
+                        problem.t = ticks[i];
+                        if (tocks && tocks.hasOwnProperty(problem.u)) {
+                            delete tocks[problem.u];
+                        }
+                    } else if (tocks && tocks.hasOwnProperty(problem.u)) {
+                        problem.t = tocks[problem.u];
+                    }
+                    problem.g = problem.t ? problem.t.g : problem.g;
+                    problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
+                    problem.v = grades.convert(problem.g);
+
+                    bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
+                    data.g[problem.v/10].push(i);
+                }
+            });
+            if (tocks) {
+                storage.set('tocks', tocks);
+            }
+            storage.set('master', data);
+        }
+
+        data.projects = projects || {};
+        __data.resolve(data);
+    });
 
     var getData = function(scope, callback) {
         __data.promise.then(
@@ -99,6 +117,32 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                     bug.on(!data.p.hasOwnProperty(problem));
                     data.projects[problem] = project;
                     storage.set('projects', data.projects);
+                });
+            },
+        },
+        tock: {
+            add: function(tock, scope, callback) {
+                getData(scope, function(data) {
+                    storage.get('tocks',function(tocks, error) {
+                        if (error) {
+                            scope.error = scope.error || error;
+                        } else {
+                            bug.on(!data.p.hasOwnProperty(tock.p));
+                            var problem = data.i[data.p[tock.p]];
+                            bug.on(problem.t !== null);
+                            problem.t = tock;
+                            problem.g = tock.g
+                            problem.s = tock.s;
+                            problem.v = grades.convert(problem.g);
+                            storage.set('master', data);
+
+                            bug.on(tocks && tocks.hasOwnProperty(tock.p));
+                            tocks = tocks || {};
+                            tocks[tock.p] = tock;
+                            storage.set('tocks', tocks);
+                            callback();
+                        }
+                    });
                 });
             },
         }

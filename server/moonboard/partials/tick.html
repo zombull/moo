@@ -1,0 +1,37 @@
+<md-dialog layout="column" layout-align="center center">
+    <md-content layout="column" layout-margin flex>
+        <form name="tickForm">
+            <md-input-container class="md-block">
+                <label>Grade</label>
+                <md-select required ng-model="tick.grade" placeholder="{{tick.grade}}">
+                    <md-option ng-repeat="g in ::grades track by $index" value="{{g}}">{{g}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-datepicker required ng-model="tick.date"></md-datepicker>
+
+            <md-input-container class="md-block">
+                <label>Stars</label>
+                <md-select required ng-model="tick.stars">
+                    <md-option ng-repeat="s in ::stars" value="{{s}}"><span ng-repeat="s in [].constructor(s) track by $index">&#x2605;</span></md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label>Attempts</label>
+                <input required type="number" ng-model="tick.attempts" min="1" max="999" ng-pattern="/^[0-9]+$/" />
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label>Sessions</label>
+                <input required type="number" ng-model="tick.sessions" min="1" max="999" ng-pattern="/^[0-9]+$/" />
+            </md-input-container>
+
+            <div layout="row" layout-align="end" flex>
+                <md-button class="md-raised md-accent" ng-click="cancel()">&#x2620;</md-button>
+                <div style="min-width: 36px"></div>
+                <md-button class="md-raised md-accent" ng-click="tock()" ng-disabled="!tickForm.$valid" class="md-primary">&#x2694;</md-button>
+            </div>
+        </form>
+    </md-content>
+</md-dialog>

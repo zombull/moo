@@ -18,6 +18,10 @@ moon.config(function($routeProvider, $locationProvider) {
         templateUrl: 'partials/peruse.html',
         controller: 'PeruseController as ctrl'
     })
+    .when('/k/:grade/:page?', {
+        templateUrl: 'static/html/peruse.html',
+        controller: 'PeruseController as ctrl'
+    })
     .when('/s/:setter/:page?', {
         templateUrl: 'partials/peruse.html',
         controller: 'SetterController as ctrl'

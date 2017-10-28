@@ -13,7 +13,8 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     var __data = {}; // The global data list, needed to retrieve setter info.
     var __problems = []; // Local list used as the source for problems.
     var perpage = 15;
-    var showTicks = ($location.path().split('/')[1].toLowerCase() === 't');
+    var showTicks = ($location.path().split('/')[1].toLowerCase() !== 'p');
+    var showTocks = ($location.path().split('/')[1].toLowerCase() === 'k');
 
     if ($routeParams.page) {
         var page = parseInt($routeParams.page);
@@ -40,10 +41,12 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
 
         // Build the master list of all problems for the current grade.
         __problems = _.slice(data.i, 0, _.size(data.p)).filter(function(problem) {
-            return  (!grade || problem.g === grade) && (!showTicks == !problem.t);
+            return  (!grade || problem.g === grade) && (!showTicks == !problem.t) && (!showTocks || problem.t.hasOwnProperty('p'));
         });
         if (__problems.length === 0) {
-            $scope.error = $scope.error || { status: 404, data: 'Did not find any ' + $routeParams.grade + ' problems.' };
+            var meta = $routeParams.grade === 'all' ? '' : $routeParams.grade + ' ';
+            var type = showTocks ? 'tocks' : showTicks ? 'ticks' : 'problems';
+            $scope.error = $scope.error || { status: 404, data: 'Did not find any {0}{1}.'.format(meta, type) };
             return;
         }
         problems.set(__problems);

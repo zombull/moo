@@ -2,7 +2,7 @@
 /**
  *
  */
-moon.controller('ProblemController', function ProblemController($scope, $timeout, $routeParams, moonboard, database, problems) {
+moon.controller('ProblemController', function ProblemController($scope, $timeout, $routeParams, $mdDialog, moonboard, database, problems) {
     'use strict';
 
     problems.reset();
@@ -83,7 +83,16 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
         queueUpdate();
     };
     $scope.tick = function (event) {
-
+        $timeout.cancel(updateTimeout);
+        $mdDialog.show({
+            targetEvent: event,
+            controller: 'TickController',
+            controllerAs: 'ctrl',
+            locals: { problem: $scope.problem, attempts: $scope.attempts || 1, sessions: $scope.sessions || 1 },
+            ariaLabel: 'tick-dialog',
+            templateUrl: 'partials/tick.html',
+            clickOutsideToClose: true,
+        });
     };
     $scope.tbd = function (event) {
 
@@ -99,4 +108,3 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
         }
     };
 });
-

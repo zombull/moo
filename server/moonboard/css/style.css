@@ -122,3 +122,23 @@ a.inv, a:not(#index):not(.inv):hover, #index:hover {
 .atc p code {
     background: rgba(0, 0, 0, 0.0666);
 }
+
+md-dialog {
+    padding: 25px;
+}
+
+md-datepicker>.md-datepicker-input-container{
+    margin-left: 3px;
+}
+
+.md-datepicker-button {
+    display: none;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
