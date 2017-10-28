@@ -2,61 +2,10 @@
     <div class="atc" ng-if="!error">
         <md-subheader class="md-no-sticky md-accent" ng-cloak>
             <div layout="column" flex class"fill-height">
-                <div layout="row" layout-sm="column" flex class"fill-height">
-                        <h2 class="atc-link"><a href="/p/all">PROBLEMS</a></h2>
-                        <span flex show-gt-sm></span>
-                        <div layout="column" flex class"fill-height">
-                            <div layout="row" flex class"fill-height">
-                                    <h2 class="atc-link"><a href="/p/v4">v4</a>&nbsp;</h2>
-                                    <h2 class="atc-link"><a href="/p/v5">v5</a>&nbsp;</h2>
-                                    <h2 class="atc-link"><a href="/p/v6">v6</a>&nbsp;</h2>
-                            </div>
-                            <div layout="row" flex>
-                                <h1 class="atc-link"><a href="/p/v7">v7</a>&nbsp;</h2>
-                                <h1 class="atc-link"><a href="/p/v8">v8</a>&nbsp;</h2>
-                                <h1 class="atc-link"><a href="/p/v9">v9</a>&nbsp;</h2>
-                            </div>
-                        </div>
-                </div>
-                <br>
-                <div layout="row" layout-sm="column" flex class"fill-height">
-                        <h2 class="atc-link"><a href="/t/all">TICKS</a></h2>
-                        <span flex show-gt-sm></span>
-                        <div layout="column" flex class"fill-height">
-                            <div layout="row" flex class"fill-height">
-                                    <h2 class="atc-link"><a href="/t/v4">v4</a>&nbsp;</h2>
-                                    <h2 class="atc-link"><a href="/t/v5">v5</a>&nbsp;</h2>
-                                    <h2 class="atc-link"><a href="/t/v6">v6</a>&nbsp;</h2>
-                            </div>
-                            <div layout="row" flex class"fill-height">
-                                <h2 class="atc-link"><a href="/t/v7">v7</a>&nbsp;</h2>
-                                <h2 class="atc-link"><a href="/t/v8">v8</a>&nbsp;</h2>
-                                <h2 class="atc-link"><a href="/t/v9">v9</a>&nbsp;</h2>
-                            </div>
-                        </div>
-                </div>
-                <br>
-                <div layout="row" layout-sm="column" flex class"fill-height">
-                        <h2 class="atc-link"><a href="/j/all">PROJECTS</a></h2>
-                        <span flex show-gt-sm></span>
-                        <div layout="column" flex class"fill-height">
-                            <div layout="row" flex class"fill-height">
-                                    <h2 class="atc-link"><a href="/j/v4">v4</a>&nbsp;</h2>
-                                    <h2 class="atc-link"><a href="/j/v5">v5</a>&nbsp;</h2>
-                                    <h2 class="atc-link"><a href="/j/v6">v6</a>&nbsp;</h2>
-                            </div>
-                            <div layout="row" flex class"fill-height">
-                                <h2 class="atc-link"><a href="/j/v7">v7</a>&nbsp;</h2>
-                                <h2 class="atc-link"><a href="/j/v8">v8</a>&nbsp;</h2>
-                                <h2 class="atc-link"><a href="/j/v9">v9</a>&nbsp;</h2>
-                            </div>
-                        </div>
-                </div>
-                <br>
-                <h2 class="atc-link"><a href="/k/all">TOCKS</a></h2>
-                <br>
-                <h2 class="atc-link"><a href="/s/all">SETTERS</a></h2>
-                <br>
+                <atc-grades name="PROBLEMS" route="p"></atc-grades>
+                <atc-grades name="TICKS" route="t"></atc-grades>
+                <atc-grades name="PROJECTS" route="j"></atc-grades>
+                <atc-grades name="TOCKS" route="k"></atc-grades>
             </div>
 
             <h3>Search Commands</h3>
