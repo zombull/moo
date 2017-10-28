@@ -71,12 +71,12 @@ host.factory('storage', function ($http, $q, bug, schema) {
         get: function(key) {
             var request = $q.defer();
             if (!schema.metadata.hasOwnProperty(key)) {
-                request.reject(true);
+                request.reject('No scheme.metadata entry for {0}'.format(key));
             }
             else {
                 if (schema.metadata[key].local) {
                     var local = localStorage.getItem(key);
-                    if (local) {
+                    if (local || schema.metadata[key].ephemeral) {
                         request.resolve(local);
                     }
                     else {
