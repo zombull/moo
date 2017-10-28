@@ -13,13 +13,11 @@ import (
 )
 
 type moonOpts struct {
-	d        *database.Database
-	cache    string
-	all      bool
-	index    bool
-	ticks    bool
-	download bool
-	full     bool
+	d     *database.Database
+	cache string
+	all   bool
+	index bool
+	ticks bool
 }
 
 func moonCmd(d *database.Database, cache string) *cobra.Command {
@@ -39,9 +37,6 @@ func moonCmd(d *database.Database, cache string) *cobra.Command {
 	cmd.Flags().BoolVarP(&opts.all, "all", "a", false, "Sync both the Moonboard's index and ticks")
 	cmd.Flags().BoolVarP(&opts.index, "index", "i", false, "Sync the Moonboard's index")
 	cmd.Flags().BoolVarP(&opts.ticks, "ticks", "t", false, "Sync the Moonboard user's ticks")
-	// cmd.Flags().BoolVarP(&opts.download, "download", "d", false, "Download moonboard.com's problems prior to syncing index")
-	cmd.Flags().BoolVarP(&opts.full, "full", "f", false, "Perform a full sync ")
-
 	return cmd
 }
 
