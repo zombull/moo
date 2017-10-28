@@ -139,7 +139,7 @@ host.factory('storage', function ($http, $q, bug, schema) {
         // Append the hash as a query string to create a unique URI.  This allows
         // CDNs to cache the data but guarantees we'll get the latest version, all
         // without having to store multiple versions on the server.
-        $http.get('data/' + name + '?version=' + cache.checksums[name]).then(
+        $http.get('data/' + name + '?version=' + schema.checksums[name]).then(
             function(response) {
                 deposit(name, response.data, true);
                 callback(response.data);
