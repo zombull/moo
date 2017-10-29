@@ -21,11 +21,11 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
             callback(data);
         }
     }
-    var data = {}
+    var data = {};
     var keys = _.keys(schema.metadata);
     function fetch(key) {
         if (key) {
-            storage.get(key, getStorage.bind(this, function(val) {
+            storage.get(key, getStorage.bind(null, function(val) {
                 data[key] = val;
                 fetch(keys.shift());
             }));
@@ -33,14 +33,14 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
             bug.on(data.hasOwnProperty('grades'));
             bug.on(data.hasOwnProperty('index'));
 
-            data['index'] = {
+            data.index = {
                 problems: data['index.problems'],
                 setters: data['index.setters'],
             };
-            delete data['index.problems'],
-            delete data['index.setters'],
+            delete data['index.problems'];
+            delete data['index.setters'];
 
-            data.grades = []
+            data.grades = [];
             for (var g = 0; g < 18; g++) {
                 data.grades[g] = [];
             }
@@ -62,7 +62,7 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                 problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
                 problem.v = grades.convert(problem.g);
 
-                bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
+                bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!");
                 data.grades[problem.v/10].push(i);
             });
             if (data.tocks) {
@@ -149,7 +149,7 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                     }
 
                     problem.t = tock;
-                    problem.g = tock.g
+                    problem.g = tock.g;
                     problem.s = tock.s;
                     problem.v = grades.convert(problem.g);
 

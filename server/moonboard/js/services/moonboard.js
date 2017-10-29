@@ -191,7 +191,7 @@ moon.factory('moonboard', function ($q, $document, database) {
             'W': 270,
             'NW': 315,
         }
-    }
+    };
 
     var canvas = null;
     var stage = null;
@@ -204,7 +204,7 @@ moon.factory('moonboard', function ($q, $document, database) {
         canvas = document.getElementById("problemCanvas");
         stage = new createjs.Stage(canvas);
         borders = [];
-        containers = new Map;
+        containers = new Map();
     
         stage.addChild(new createjs.Bitmap('data:image/png;base64,'+images[0]));
         
@@ -229,7 +229,7 @@ moon.factory('moonboard', function ($q, $document, database) {
                     stage.update();
                     loaded.resolve();
                 }
-            }
+            };
         });
     }
 
@@ -251,10 +251,10 @@ moon.factory('moonboard', function ($q, $document, database) {
                 if (images === null) {
                     database.images(function(img) {
                         images = img;
-                        drawBoard(loaded)
+                        drawBoard(loaded);
                     });
                 } else {
-                    drawBoard(loaded)
+                    drawBoard(loaded);
                 }
             });
             return loaded.promise;

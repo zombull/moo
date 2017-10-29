@@ -23,7 +23,7 @@ host.controller('SearchController', function SearchController($location, $timeou
 
     self.searchTextChange = function(query) {
         self.query = query;
-    }
+    };
 
     function clearSearch() {
         if (inspector.autoclear(self.query)) {

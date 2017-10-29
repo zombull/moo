@@ -5,9 +5,9 @@ host.filter('linkify', function($sce) {
     return function(entry, external) {
         var target =  external ? ' target="_blank"' : '';
         var meta = entry.hasOwnProperty('g') ? '<i>&nbsp;&nbsp;({0})</i>'.format(entry.g) : '';
-        var stars = ''
+        var stars = '';
         if (entry.hasOwnProperty('g')) {
-            stars = '&nbsp;&nbsp;'
+            stars = '&nbsp;&nbsp;';
             if (entry.hasOwnProperty('s')) {
                 _.times(entry.s, function() {
                     stars += '&#x2605;';

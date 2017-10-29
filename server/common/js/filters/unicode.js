@@ -3,6 +3,6 @@ host.filter('unicode', function($sce) {
 
     return function(input){
         return $sce.trustAsHtml('&#x{0};'.format(input));
-    }
+    };
 });
     

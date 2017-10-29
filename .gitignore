@@ -1,1 +1,3 @@
-/server/data/*.json
+/**/data/*.json
+release/
+node_modules/

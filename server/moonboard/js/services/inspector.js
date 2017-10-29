@@ -111,7 +111,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                         // of the setter, i.e. /s/<name> minus spaces and
                         // lowercased.
                         var setby = options.setby;
-                        options.setby = {}
+                        options.setby = {};
                         _.each(setters, function(id, key) {
                             if ((key.indexOf(setby.v) !== -1) === setby.b) {
                                 options.setby[id] = true;

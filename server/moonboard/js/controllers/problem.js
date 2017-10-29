@@ -28,10 +28,10 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
             var problem = data.index.problems[me];
             var setter = data.index.setters[problem.e];
             var grades = data.grades[problem.v / 10];
-            var suggested = { setter: [], grade: [] }
+            var suggested = { setter: [], grade: [] };
             _.each(setter.p, function(p) {
                 if (p != me && suggested.setter.length < 10 && !data.index.problems[p].t) {
-                    suggested.setter.push(data.index.problems[p])
+                    suggested.setter.push(data.index.problems[p]);
                 }
             });
             _.each(grades, function(p) {
@@ -45,7 +45,7 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
 
             moonboard.load().then(
                 function() {
-                    moonboard.set(problem.h)
+                    moonboard.set(problem.h);
                 },
                 function() {
                     $scope.error = $scope.error || { status: 500, data: 'Failed to load Moonboard' };
@@ -65,10 +65,16 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
     }
 
     $scope.attempt = function (event) {
-        $scope.attempts++ || $scope.sessions++;
+        $scope.attempts++;
+        if ($scope.sessions === 0) {
+            $scope.sessions++;
+        }
         queueUpdate();
     };
     $scope.session = function (event) {
+        if ($scope.attempts === 0) {
+            $scope.attempts++;
+        }
         $scope.sessions++;
         queueUpdate();
     };

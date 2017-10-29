@@ -3,7 +3,7 @@ host.factory('truthiness', function () {
 
     return function(val) {
         if (val === null) {
-            return val
+            return val;
         }
         if (val.length === 1) {
             return val === '!' ? false : true;
