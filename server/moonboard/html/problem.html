@@ -5,10 +5,8 @@
     <span flex ng-if="!error" hide-sm></span>
     <div flex ng-if="problem && !error" style="padding-top:15px;min-width:360px;">
         <md-content ng-if="!problem.t" layout="row" layout-align="center" ng-cloak>
-            <md-button ng-if="attempts<21" class="md-raised md-accent bigger" ng-click="attempt($event)" ng-bind-html="attemptCodes[attempts] | unicode" aria-label="a"></md-button>
-            <md-button ng-if="attempts>20" class="md-raised md-accent" ng-click="attempt($event)">{{attempts}}</md-button>
-            <md-button ng-if="sessions<21" class="md-raised md-accent bigger" ng-click="session($event)" ng-bind-html="sessionCodes[sessions] | unicode" aria-label="s"></md-button>
-            <md-button ng-if="sessions>20" class="md-raised md-accent" ng-click="session($event)">{{sessions}}</md-button>
+            <md-button class="md-raised md-accent" ng-click="attempt($event)">{{attempts}}</md-button>
+            <md-button class="md-raised md-accent" ng-click="session($event)">{{sessions}}</md-button>
             <md-button class="md-raised md-accent" ng-click="tick($event)">&#x2694;</md-button>
             <md-button class="md-raised md-accent" ng-click="tbd($event)">&#x2620;</md-button>
             <md-button class="md-raised md-accent" ng-click="nuke($event)">&#x2622;</md-button>

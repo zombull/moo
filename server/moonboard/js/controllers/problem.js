@@ -7,16 +7,6 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
 
     problems.reset();
 
-    $scope.attemptCodes = [
-        '24FF', '2776', '2777', '2778', '2779', '277A', '277B', '277C', '277D', '277E', '277F',
-        '24EB', '24EC', '24ED', '24EE', '24EF', '24F0', '24F1', '24F2', '24F3', '24F4'
-    ];
-
-    $scope.sessionCodes = [
-        '24EA', '2460', '2461', '2462', '2463', '2464', '2465', '2466', '2467', '2468', '2469',
-        '246A', '246B', '246C', '246D', '246E', '246F', '2470', '2471', '2472', '2473',
-    ];
-
     var shadow = {
         attempts: 0,
         sessions: 0,
