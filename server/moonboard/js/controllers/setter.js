@@ -30,15 +30,15 @@ moon.controller('SetterController', function SetterController($scope, $location,
             return;
         }
 
-        var setter = data.index[data.setters[skey]];
+        var setter = data.index.setters[data.setters[skey]];
         $scope.setter = _.pick(setter, ['u', 'n']);
         if (!showTicks) {
             $scope.setter.u = 'st/' + $routeParams.setter.toLowerCase();
         }
 
         _.each(setter.p, function(i) {
-            if (!showTicks == !data.index[i].t) {
-                __problems.push(data.index[i]);
+            if (!showTicks == !data.index.problems[i].t) {
+                __problems.push(data.index.problems[i]);
             }
         });
         if (__problems.length === 0) {

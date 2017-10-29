@@ -5,6 +5,6 @@ moon.controller('AirTrafficController', function AirTrafficController(database, 
     'use strict';
 
     database.all(function(data) {
-        problems.set(_.slice(data.index, 0, _.size(data.problems)));
+        problems.set(data.index.problems);
     });
 });

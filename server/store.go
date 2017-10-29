@@ -153,11 +153,17 @@ type holds struct {
 	Finish       []string `json:"f"`
 }
 
+// moonEntry holds the actual data for a problem or a setter.
+// Keep them in the same object even though many of the fields
+// are unique to one or the other, as some parts of the code
+// works with both problems and setters and so the JSON names
+// need to be identical for common fields and distinct for unique
+// fields.
 type moonEntry struct {
 	Url           string `json:"u"`
 	Name          string `json:"n"`
 	LowerCaseName string `json:"l"`
-	Id            int    `json:"i"` // index into moonData, not database ID or moonboard ID
+	Id            int    `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
 	Date          string `json:"d,omitempty"`
 	Nickname      string `json:"k,omitempty"`
 	Holds         *holds `json:"h,omitempty"`
@@ -178,8 +184,12 @@ type moonTick struct {
 	Sessions uint   `json:"e,omitempty"`
 }
 
+type moonIndex struct {
+	Problems []moonEntry
+	Setters  []moonEntry
+}
 type moonData struct {
-	Index    []moonEntry
+	Index    moonIndex
 	Problems map[string]int
 	Setters  map[string]int
 	Images   []string
@@ -205,9 +215,11 @@ func (s *KeyValueStore) update(d *database.Database) {
 	routes := d.GetAllRoutes(moonboard.Id(d))
 	bug.On(len(routes) == 0, fmt.Sprintf("No moonboard routes found: %d", moonboard.Id(d)))
 
-	nr := len(routes)
 	md := moonData{
-		Index:    make([]moonEntry, nr, len(setters)+nr),
+		Index: moonIndex{
+			Problems: make([]moonEntry, len(routes)),
+			Setters:  make([]moonEntry, 0, len(setters)),
+		},
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
 		Images:   make([]string, 150),
@@ -222,10 +234,18 @@ func (s *KeyValueStore) update(d *database.Database) {
 			LowerCaseName: strings.ToLower(r.Name),
 			Problems:      make([]int, 0),
 		}
+
+		// Like usual, Moonboard doesn't sanitize their data and so there
+		// are "duplicate" setters that are actually the same person, just
+		// with different capitalization of their name.  Assume all such
+		// collisions are cases where it's a single setter and only insert
+		// a new setter if they have a unique URL.  This is why append is
+		// used instead of directly indexing, and is also why Setters is
+		// created with a length of 0.
 		if _, ok := md.Setters[e.Url]; !ok {
-			e.Id = len(md.Index)
+			e.Id = len(md.Index.Setters)
 			md.Setters[e.Url] = e.Id
-			md.Index = append(md.Index, e)
+			md.Index.Setters = append(md.Index.Setters, e)
 		}
 	}
 
@@ -301,8 +321,8 @@ func (s *KeyValueStore) update(d *database.Database) {
 		bug.On(ok, fmt.Sprintf("Duplicate Moonboard problem URL: %s", e.Url))
 		md.Problems[e.Url] = i
 
-		md.Index[i] = e
-		md.Index[setter].Problems = append(md.Index[setter].Problems, i)
+		md.Index.Problems[i] = e
+		md.Index.Setters[setter].Problems = append(md.Index.Setters[setter].Problems, i)
 
 		t := d.GetTicks(r.Id)
 		if len(t) > 0 {
@@ -335,8 +355,8 @@ func (s *KeyValueStore) update(d *database.Database) {
 	}
 	dataDir := path.Join(s.dir, "data")
 
-	s.export("moonboard.dark", dataDir, md.Index[:10000])
-	s.export("moonboard.side", dataDir, md.Index[10000:])
+	s.export("moonboard.index.problems", dataDir, md.Index.Problems)
+	s.export("moonboard.index.setters", dataDir, md.Index.Setters)
 	s.export("moonboard.images", dataDir, md.Images)
 	s.export("moonboard.problems", dataDir, md.Problems)
 	s.export("moonboard.setters", dataDir, md.Setters)

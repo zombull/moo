@@ -26,46 +26,44 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
     function fetch(key) {
         if (key) {
             storage.get(key, getStorage.bind(this, function(val) {
-                if (key === 'dark' || key === 'side') {
-                    console.log(key + " = "+ (((JSON.stringify(val).length + 'index'.length)* 2)/1024).toFixed(2)+" KB");
-                }
                 data[key] = val;
                 fetch(keys.shift());
             }));
         } else {
             bug.on(data.hasOwnProperty('grades'));
+            bug.on(data.hasOwnProperty('index'));
 
-            data['index'] = data.dark.concat(data.side);
-            delete data[dark];
-            delete data[side];
+            data['index'] = {
+                problems: data['index.problems'],
+                setters: data['index.setters'],
+            };
+            delete data['index.problems'],
+            delete data['index.setters'],
 
             data.grades = []
             for (var g = 0; g < 18; g++) {
                 data.grades[g] = [];
             }
 
-            var end = _.size(data.problems);
-            _.each(data.index, function(problem, i) {
-                if (i < end) {
-                    problem.t = null;
-                    if (data.ticks.hasOwnProperty(i)) {
-                        problem.t = data.ticks[i];
-                        if (data.tocks && data.tocks.hasOwnProperty(problem.u)) {
-                            delete data.tocks[problem.u];
-                        }
-                    } else if (data.tocks && data.tocks.hasOwnProperty(problem.u)) {
-                        problem.t = data.tocks[problem.u];
+            _.each(data.index.problems, function(problem, i) {
+                problem.t = null;
+                if (data.ticks.hasOwnProperty(i)) {
+                    problem.t = data.ticks[i];
+                    if (data.tocks && data.tocks.hasOwnProperty(problem.u)) {
+                        delete data.tocks[problem.u];
                     }
-                    if (problem.t && data.projects && data.projects.hasOwnProperty(problem.u)) {
-                        delete data.projects[problem.u];
-                    }
-                    problem.g = problem.t ? problem.t.g : problem.g;
-                    problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
-                    problem.v = grades.convert(problem.g);
-
-                    bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
-                    data.grades[problem.v/10].push(i);
+                } else if (data.tocks && data.tocks.hasOwnProperty(problem.u)) {
+                    problem.t = data.tocks[problem.u];
                 }
+                if (problem.t && data.projects && data.projects.hasOwnProperty(problem.u)) {
+                    delete data.projects[problem.u];
+                }
+                problem.g = problem.t ? problem.t.g : problem.g;
+                problem.s = (problem.t && problem.t.s) ? problem.t.s : problem.s;
+                problem.v = grades.convert(problem.g);
+
+                bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!")
+                data.grades[problem.v/10].push(i);
             });
             if (data.tocks) {
                 storage.set('tocks', data.tocks);
@@ -104,7 +102,7 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
         },
         setters: function(callback, scope) {
             getData(scope, function(data) {
-                callback(_.slice(data.index, _.size(data.problems)));
+                callback(data.index.setters);
             });
         },
         setterIds: function(callback, scope) {
@@ -142,7 +140,7 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
             add: function(tock, scope, callback) {
                 getData(scope, function(data) {
                     bug.on(!data.problems.hasOwnProperty(tock.p));
-                    var problem = data.index[data.problems[tock.p]];
+                    var problem = data.index.problems[data.problems[tock.p]];
                     bug.on(problem.t !== null);
 
                     if (data.projects.hasOwnProperty(tock.p)) {
