@@ -25,12 +25,10 @@ var source = {
     fonts: ['common/css/ocr/*.*', '!common/css/ocr/*.css',
             'common/css/universalia/*.*', '!common/css/universalia/*.css',
             'common/css/v5_bloques/*.*', '!common/css/v5_bloques/*.css'],
-    nginx: 'nginx/*.*',
 };
 
 var destination = {
     fc: 'release/fc',
-    nginx: 'release/nginx',
 }
 
 gulp.task('clean', function() {
@@ -115,13 +113,7 @@ gulp.task('server', /*['checksums'],*/ function() {
         .pipe(gulp.dest(server));
 });
 
-// Copy NGINX to the release.
-gulp.task('nginx', function() {
-    return gulp.src(source.nginx)
-        .pipe(gulp.dest(destination.nginx));
-});
-
-gulp.task('release', ['jshint', 'server', 'nginx']);
+gulp.task('release', ['jshint', 'server']);
 
 gulp.task('default', [
   'release'
