@@ -32,8 +32,7 @@ func (s *Server) commonRoutes(e *echo.Echo, h string) {
 	// // Send back the main HTML page when accessing a front facing URL.
 	e.File("/", path.Join(s.dir, h, "index.html"))
 
-	e.GET("/data/master", s.store.getInternal(h))
-	e.GET("/data/ticks", s.store.getTicks(h))
+	e.GET("/data/:key", s.store.getValue(h))
 }
 
 func (s *Server) Log(port string) {
@@ -54,7 +53,7 @@ func (s *Server) Run(port string) {
 	beta.File("/:crag/:route", path.Join(s.dir, "beta", "index.html"))
 
 	// beta.GET('/go', s.getGo)
-	beta.GET("/data/crag/:crag", s.store.getCrag)
+	// beta.GET("/data/crag/:crag", s.store.getCrag)
 	// beta.GET("/data/area/:crag/:area", s.store.getArea)
 	// beta.GET("/data/route/:crag/:route", s.store.getRoute)
 
@@ -76,7 +75,8 @@ func (s *Server) Run(port string) {
 		"southeast": "beta",
 		"norcal":    "beta",
 		"socal":     "beta",
-		"2016abo":   "moon",
+		"dark":      "moonboard",
+		"side":      "moonboard",
 	}
 
 	// Server

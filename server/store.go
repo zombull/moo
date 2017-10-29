@@ -46,10 +46,10 @@ func newStore(root string) *KeyValueStore {
 			name := path.Join(dataDir, fi.Name())
 
 			if strings.HasSuffix(fi.Name(), ".json") {
-				s.data[strings.Replace(strings.TrimSuffix(fi.Name(), ".json"), ".", ":", -1)], err = ioutil.ReadFile(name)
+				s.data[strings.TrimSuffix(fi.Name(), ".json")], err = ioutil.ReadFile(name)
 				bug.OnError(err)
 			} else if strings.HasSuffix(fi.Name(), ".md5") {
-				s.sums[strings.Replace(strings.TrimSuffix(fi.Name(), ".md5"), ".", ":", -1)], err = ioutil.ReadFile(name)
+				s.sums[strings.TrimSuffix(fi.Name(), ".md5")], err = ioutil.ReadFile(name)
 				bug.OnError(err)
 			}
 		}
@@ -93,38 +93,35 @@ func (s *KeyValueStore) getInternal(key string) func(c echo.Context) error {
 	}
 }
 
-func (s *KeyValueStore) getTicks(host string) func(c echo.Context) error {
+func (s *KeyValueStore) getValue(host string) func(c echo.Context) error {
 	return func(c echo.Context) error {
-		return s.get(c, "ticks:"+host, fmt.Sprintf("Did not find any ticks for '%s'", host))
+		key := c.Param("key")
+		return s.get(c, host+"."+key, fmt.Sprintf("Did not find any %s for '%s'", key, host))
 	}
 }
 
-func (s *KeyValueStore) getCrag(c echo.Context) error {
-	crag := c.Param("crag")
-	return s.get(c, "crag:"+crag, fmt.Sprintf("The crag '%s' was not found.", crag))
-}
+// func (s *KeyValueStore) getCrag(c echo.Context) error {
+// 	crag := c.Param("crag")
+// 	return s.get(c, "crag:"+crag, fmt.Sprintf("The crag '%s' was not found.", crag))
+// }
 
-func (s *KeyValueStore) getArea(c echo.Context) error {
-	crag := c.Param("crag")
-	area := c.Param("area")
-	return s.get(c, "area:"+crag+":a:"+area, fmt.Sprintf("The area '%s' was not found in %s.", area, crag))
-}
+// func (s *KeyValueStore) getArea(c echo.Context) error {
+// 	crag := c.Param("crag")
+// 	area := c.Param("area")
+// 	return s.get(c, "area:"+crag+":a:"+area, fmt.Sprintf("The area '%s' was not found in %s.", area, crag))
+// }
 
-func (s *KeyValueStore) getRoute(c echo.Context) error {
-	crag := c.Param("crag")
-	route := c.Param("route")
-	return s.get(c, "route:"+crag+":"+route, fmt.Sprintf("The route '%s' was not found in %s.", route, crag))
-}
+// func (s *KeyValueStore) getRoute(c echo.Context) error {
+// 	crag := c.Param("crag")
+// 	route := c.Param("route")
+// 	return s.get(c, "route:"+crag+":"+route, fmt.Sprintf("The route '%s' was not found in %s.", route, crag))
+// }
 
-func (s *KeyValueStore) getProblem(c echo.Context) error {
-	set := c.Param("set")
-	problem := c.Param("problem")
-	return s.get(c, "problem:"+set+":"+problem, fmt.Sprintf("The problem '%s' was not found in Moonboard set %s.", problem, set))
-}
-
-func checksum(b []byte) []byte {
-	return []byte(fmt.Sprintf("%x", md5.Sum(b)))
-}
+// func (s *KeyValueStore) getProblem(c echo.Context) error {
+// 	set := c.Param("set")
+// 	problem := c.Param("problem")
+// 	return s.get(c, "problem:"+set+":"+problem, fmt.Sprintf("The problem '%s' was not found in Moonboard set %s.", problem, set))
+// }
 
 func sanitize(s string) string {
 	return strings.ToLower(strings.Map(func(r rune) rune {
@@ -133,6 +130,21 @@ func sanitize(s string) string {
 		}
 		return r
 	}, s))
+}
+
+func checksum(b []byte) []byte {
+	return []byte(fmt.Sprintf("%x", md5.Sum(b)))
+}
+
+func (s *KeyValueStore) export(k, d string, v interface{}) {
+	b, err := json.Marshal(v)
+	bug.OnError(err)
+	s.data[k] = b
+	s.sums[k] = checksum(b)
+	err = ioutil.WriteFile(path.Join(d, k+".json"), b, 0644)
+	bug.OnError(err)
+	err = ioutil.WriteFile(path.Join(d, k+".md5"), checksum(b), 0644)
+	bug.OnError(err)
 }
 
 type holds struct {
@@ -158,19 +170,20 @@ type moonEntry struct {
 	Comment       string `json:"c,omitempty"`
 }
 
-type moonData struct {
-	Index    []moonEntry    `json:"i"`
-	Problems map[string]int `json:"p"`
-	Setters  map[string]int `json:"s"`
-	Images   []string       `json:"img"`
-}
-
 type moonTick struct {
 	Date     string `json:"d"`
 	Grade    string `json:"g"`
 	Stars    uint   `json:"s"`
 	Attempts uint   `json:"a"`
 	Sessions uint   `json:"e,omitempty"`
+}
+
+type moonData struct {
+	Index    []moonEntry
+	Problems map[string]int
+	Setters  map[string]int
+	Images   []string
+	Ticks    map[int]moonTick
 }
 
 func getProblemUrl(s string) string {
@@ -186,8 +199,6 @@ func getSetterUrl(s string) string {
 }
 
 func (s *KeyValueStore) update(d *database.Database) {
-	ticks := make(map[int]moonTick, 0)
-
 	setters := d.GetSetters(moonboard.Id(d))
 	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", moonboard.Id(d)))
 
@@ -200,6 +211,7 @@ func (s *KeyValueStore) update(d *database.Database) {
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
 		Images:   make([]string, 150),
+		Ticks:    make(map[int]moonTick, 0),
 	}
 
 	for _, r := range setters {
@@ -303,7 +315,7 @@ func (s *KeyValueStore) update(d *database.Database) {
 			if t[0].Sessions > 0 {
 				mt.Sessions = t[0].Sessions
 			}
-			ticks[i] = mt
+			md.Ticks[i] = mt
 		}
 	}
 
@@ -323,23 +335,12 @@ func (s *KeyValueStore) update(d *database.Database) {
 	}
 	dataDir := path.Join(s.dir, "data")
 
-	b, err := json.Marshal(md)
-	bug.OnError(err)
-	s.data["moonboard"] = b
-	s.sums["moonboard"] = checksum(b)
-	err = ioutil.WriteFile(path.Join(dataDir, "moonboard.json"), b, 0644)
-	bug.OnError(err)
-	err = ioutil.WriteFile(path.Join(dataDir, "moonboard.md5"), checksum(b), 0644)
-	bug.OnError(err)
-
-	b, err = json.Marshal(ticks)
-	bug.OnError(err)
-	s.data["ticks:moonboard"] = b
-	s.sums["ticks:moonboard"] = checksum(b)
-	err = ioutil.WriteFile(path.Join(dataDir, "ticks.moonboard.json"), b, 0644)
-	bug.OnError(err)
-	err = ioutil.WriteFile(path.Join(dataDir, "ticks.moonboard.md5"), checksum(b), 0644)
-	bug.OnError(err)
+	s.export("moonboard.dark", dataDir, md.Index[:10000])
+	s.export("moonboard.side", dataDir, md.Index[10000:])
+	s.export("moonboard.images", dataDir, md.Images)
+	s.export("moonboard.problems", dataDir, md.Problems)
+	s.export("moonboard.setters", dataDir, md.Setters)
+	s.export("moonboard.ticks", dataDir, md.Ticks)
 }
 
 type betaEntry struct {

@@ -24,7 +24,7 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
 
     database.all(function(data) {
         var name = $routeParams.problem;
-        if (!data.p.hasOwnProperty(name)) {
+        if (!data.problems.hasOwnProperty(name)) {
             $scope.error = $scope.error || { status: 404, data: 'The problem "' + name + '" does not exist.' };
             return;
         }
@@ -32,21 +32,21 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
         database.project.get(name, $scope, function(project) {
             shadow.attempts = $scope.attempts = project ? project.attempts : 0;
             shadow.sessions = $scope.sessions = project ? project.sessions : 0;
-            problems.set(data.i);
+            problems.set(data.index);
 
-            var me = data.p[name];
-            var problem = data.i[me];
-            var setter = data.i[problem.e];
-            var grades = data.g[problem.v / 10];
+            var me = data.problems[name];
+            var problem = data.index[me];
+            var setter = data.index[problem.e];
+            var grades = data.grades[problem.v / 10];
             var suggested = { setter: [], grade: [] }
             _.each(setter.p, function(p) {
-                if (p != me && suggested.setter.length < 10 && !data.i[p].t) {
-                    suggested.setter.push(data.i[p])
+                if (p != me && suggested.setter.length < 10 && !data.index[p].t) {
+                    suggested.setter.push(data.index[p])
                 }
             });
             _.each(grades, function(p) {
-                if (p != me && (suggested.grade.length + suggested.setter.length) < 20 && !data.i[p].t) {
-                    suggested.grade.push(data.i[p]);
+                if (p != me && (suggested.grade.length + suggested.setter.length) < 20 && !data.index[p].t) {
+                    suggested.grade.push(data.index[p]);
                 }
             });
             $scope.setter = setter;

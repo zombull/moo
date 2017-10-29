@@ -25,20 +25,20 @@ moon.controller('SetterController', function SetterController($scope, $location,
 
     database.all(function(data) {
         var skey = 's/' + $routeParams.setter.toLowerCase();
-        if (!data.s.hasOwnProperty(skey)) {
+        if (!data.setters.hasOwnProperty(skey)) {
             $scope.error = $scope.error || { status: 404, data: 'Did not find a setter matching "' + $routeParams.setter + '"' };
             return;
         }
 
-        var setter = data.i[data.s[skey]];
+        var setter = data.index[data.setters[skey]];
         $scope.setter = _.pick(setter, ['u', 'n']);
         if (!showTicks) {
             $scope.setter.u = 'st/' + $routeParams.setter.toLowerCase();
         }
 
         _.each(setter.p, function(i) {
-            if (!showTicks == !data.i[i].t) {
-                __problems.push(data.i[i]);
+            if (!showTicks == !data.index[i].t) {
+                __problems.push(data.index[i]);
             }
         });
         if (__problems.length === 0) {

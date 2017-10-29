@@ -43,14 +43,14 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
 
         if (showProjects) {
             _.each(data.projects, function(v, k) {
-                bug.on(!data.p.hasOwnProperty(k));
-                var problem = data.i[data.p[k]];
+                bug.on(!data.problems.hasOwnProperty(k));
+                var problem = data.index[data.problems[k]];
                 if (!grade || problem.g === grade) {
                     __problems.push(problem);
                 }
             });
         } else {
-            __problems = _.slice(data.i, 0, _.size(data.p)).filter(function(problem) {
+            __problems = _.slice(data.index, 0, _.size(data.problems)).filter(function(problem) {
                 return  (!grade || problem.g === grade) && (!showTicks == !problem.t) && (!showTocks || problem.t.hasOwnProperty('p'));
             });
         }
@@ -78,7 +78,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
         $scope.i = i;
         $scope.problem = __problems[$scope.i];
         moonboard.set($scope.problem.h);
-        $scope.setter = __data.i[$scope.problem.e];
+        $scope.setter = __data.index[$scope.problem.e];
 
         if (__problems.length > perpage) {
             $scope.list = [];
