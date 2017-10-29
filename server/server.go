@@ -55,7 +55,7 @@ func (s *Server) Run(port string, release bool) {
 	e.Any("/*", func(c echo.Context) error {
 		h := c.Request().Host
 		ss := strings.SplitN(h, ".", 2)
-		if len(ss) != 2 || ss[1] != domain+port {
+		if len(ss) != 2 || len(ss[1]) == 0 || strings.Split(ss[1], ":")[0] != domain {
 			fmt.Printf("%v\n", ss)
 			return echo.ErrNotFound
 		}
