@@ -83,7 +83,7 @@ gulp.task('server', /*['checksums'],*/ function() {
 
     var js = gulp.src(source.js)
         .pipe(concat('moon.js'))                                // Concatenate everything into a single JS file.
-        // .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
+        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
         .pipe(ngAnnotate({add: true, single_quotes: true}))     // Annotate angular code
         .pipe(gulp.dest(server + '/js'))                        // Save concatenated and annotated file before minification.
         .pipe(rename({extname: ".min.js"}))                     // Rename the stream
@@ -100,14 +100,14 @@ gulp.task('server', /*['checksums'],*/ function() {
         .pipe(gulp.dest(server + '/img'));
 
     gulp.src('moonboard/substorage.html')
-        // .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
+        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
         .pipe(minifyHTML())                                     // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
         .pipe(gulp.dest(server));
 
     return gulp.src(source.index)
         .pipe(gulp.dest(server))                                // Necessary to set the path so injection works correctly.
-        // .pipe(replace(/<base href=.*>/, '<base href="http://moon.zombull.xyz/">'))
-        // .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
+        .pipe(replace(/<base href=.*>/, '<base href="http://moon.zombull.xyz/">'))
+        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
         .pipe(replace('ng-app', 'ng-strict-di ng-app'))
         .pipe(inject(css, {relative: true, addPrefix: 'static', transform: checksum}))
         .pipe(inject(js, {relative: true, addPrefix: 'static', transform: checksum}))
