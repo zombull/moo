@@ -339,7 +339,7 @@ func (s *KeyValueStore) update(d *database.Database) {
 		}
 	}
 
-	imgDir := path.Join(s.dir, "moonboard", "img")
+	imgDir := path.Join(s.dir, "img")
 	for i := 0; i < 150; i++ {
 		if i > 40 && i < 50 {
 			continue
