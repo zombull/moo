@@ -1,6 +1,6 @@
 <md-subheader class="md-no-sticky md-accent" ng-cloak>
-    <h2 ng-if="!$ctrl.problem.t"><div><span ng-if="$ctrl.problem.b">&#x272a;&nbsp;</span>{{$ctrl.problem.n}}&nbsp;-&nbsp;{{$ctrl.problem.g}}</div></h2>
-    <h2 ng-if="$ctrl.problem.t"><div>&#x2739;&nbsp;<span ng-if="$ctrl.problem.b">&#x272a;&nbsp;</span>{{$ctrl.problem.n}}&nbsp;-&nbsp;{{$ctrl.problem.t.g}}</div></h2>
+    <h2 ng-if="!$ctrl.problem.t"><a class="inv" ng-href="{{$ctrl.problem.u}}"><span ng-if="$ctrl.problem.b">&#x272a;&nbsp;</span>{{$ctrl.problem.n}}&nbsp;-&nbsp;{{$ctrl.problem.g}}</a></h2>
+    <h2 ng-if="$ctrl.problem.t"><a class="inv" ng-href="{{$ctrl.problem.u}}">&#x2739;&nbsp;<span ng-if="$ctrl.problem.b">&#x272a;&nbsp;</span>{{$ctrl.problem.n}}&nbsp;-&nbsp;{{$ctrl.problem.t.g}}</a></h2>
     <md-divider></md-divider><br>
 
     <table cellpadding="0" cellspacing="0">
