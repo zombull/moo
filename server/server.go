@@ -61,13 +61,16 @@ func (s *Server) Run(port string, release bool) {
 		}
 		h = ss[0]
 
+		if release {
+			c.Response().Header().Set("Cache-Control", "private, max-age=31536000")
+		}
 		if ee, ok := echoes[h]; ok {
 			ee.ServeHTTP(c.Response(), c.Request())
 			return nil
 		} else if hh, ok := subs[h]; ok {
 			return c.File(path.Join(s.dir, hh, "substorage.html"))
 		}
-		fmt.Printf("host = %s", h)
+		c.Response().Header().Set("Cache-Control", "no-cache")
 		return echo.ErrNotFound
 	})
 	e.Logger.Fatal(e.Start(port))
