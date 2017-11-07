@@ -6,7 +6,7 @@
     <div ng-if="problem && !error" style="padding-top:15px;min-width:360px;">
         <md-content layout="row" layout-align="center" ng-cloak>
             <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="ppage($event)">&#x2B9C;</md-button>
-            <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="ppage($event)">&#x2B98;</md-button>
+            <md-button class="md-raised md-accent" ng-disabled="i==0" ng-click="prev($event)">&#x2B98;</md-button>
             <md-button class="md-raised md-accent big" ng-click="rand($event)">&#x2618;</md-button>
             <md-button class="md-raised md-accent" ng-disabled="i==count-1" ng-click="next($event)">&#x2B9A;</md-button>
             <md-button class="md-raised md-accent" ng-disabled="i==count-1" ng-click="npage($event)">&#x2B9E;</md-button>
