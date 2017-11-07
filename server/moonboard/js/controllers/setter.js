@@ -54,7 +54,7 @@ moon.controller('SetterController', function SetterController($scope, $location,
                 update(Math.min($scope.i, __problems.length - 1));
             },
             function() {
-                $scope.error = $scope.error || { status: 500, da2ta: 'Failed to load Moonboard' };
+                $scope.error = $scope.error || { status: 500, data: 'Failed to load Moonboard' };
             }
         );
     }, $scope);
