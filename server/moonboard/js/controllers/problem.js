@@ -57,11 +57,11 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
     var updateTimeout = null;
     function queueUpdate() {
         $timeout.cancel(updateTimeout);
-        updateTimeout = $timeout(function(){
-            database.project.set($routeParams.problem, { attempts: $scope.attempts, sessions: $scope.sessions,}, $scope);
-            shadow.attempts = $scope.attempts;
-            shadow.sessions = $scope.sessions;
-        }, 3000);
+        updateTimeout = $timeout(function(name, attempts, sessions) {
+            database.project.set(name, { attempts: attempts, sessions: sessions }, $scope);
+            shadow.attempts = attempts;
+            shadow.sessions = sessions;
+        }, 3000, true, $routeParams.problem, $scope.attempts, $scope.sessions);
     }
 
     $scope.attempt = function (event) {
