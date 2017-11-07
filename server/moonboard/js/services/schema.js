@@ -20,7 +20,7 @@ moon.factory('schema', function () {
         'index.setters': 'f7a3e016aecb0794c60009d3178a7e86',
         problems: 'add80bfd82cfe295bcaff49534af3584',
         setters: '9517ff32978a2f84af205ed5e58f2ee6',
-        ticks: '4c9399e05de09d571ba02dda7158337c',
+        ticks: '4922203cafbc20819302bd74cc5301fa',
     };
 
     return {
