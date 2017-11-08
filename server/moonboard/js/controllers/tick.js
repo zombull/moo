@@ -18,8 +18,8 @@ moon.controller('TickController', function($scope, $mdDialog, $filter, database,
     $scope.tock = function() {
         // The variable names/keys matter as they need to match the actual
         // tick schema so that a "tock" can be used interchangeably with a
-        database.tock.add({
-            p: problem.u,
+        database.tock.add(problem.u, {
+            p: problem.n,
             d: $filter('date')($scope.tick.date, 'LLLL dd, yyyy'),
             g: $scope.tick.grade,
             s: parseInt($scope.tick.stars),

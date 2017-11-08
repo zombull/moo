@@ -8,7 +8,6 @@ import (
 )
 
 type serveOpts struct {
-	d       *database.Database
 	s       *server.Server
 	update  bool
 	port    string
@@ -17,7 +16,6 @@ type serveOpts struct {
 
 func serveCmd(d *database.Database, s *server.Server) *cobra.Command {
 	opts := serveOpts{
-		d: d,
 		s: s,
 	}
 
@@ -38,7 +36,7 @@ func serveCmd(d *database.Database, s *server.Server) *cobra.Command {
 
 func serve(opts *serveOpts) {
 	if opts.update {
-		opts.s.Update(opts.d)
+		opts.s.Update()
 	} else {
 		if len(opts.port) > 0 {
 			opts.port = ":" + opts.port

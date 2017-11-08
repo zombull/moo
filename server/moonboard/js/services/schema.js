@@ -12,7 +12,8 @@ moon.factory('schema', function () {
         setters: { local: true },
         ticks: { local: true },
         tocks: { local: true, ephemeral: true },
-        projects: { local: true, ephemeral: true }
+        projects: { local: true, ephemeral: true },
+        password: { local: true, ephemeral: true },
     };
     var checksums = {
         images: 'd12cd143a2d69484feaa72d1942bb979',

@@ -34,6 +34,11 @@ type Config struct {
 	// Default: $HOME/Development/go/src/github.com/zombull/floating-castle/server
 	Server string `yaml:"server"`
 
+	// Password enables tock POSTs when set
+	// Env Var: FC_PASSWORD
+	// Default: ""
+	Password string `yaml:"password"`
+
 	// Specify the Moonboard set, i.e. year and holds combination.
 	// Env Var: FC_MOONBOARD_SET
 	// Default: "MoonBoard 2016"
@@ -63,6 +68,7 @@ func loadConfig() *Config {
 		Cache:        path.Join(dir, "Development", "go", "src", "github.com", "zombull", "cache-floating-castle", "moonboard"),
 		Database:     path.Join(dir, "Development", "go", "src", "github.com", "zombull", "db-floating-castle", "sqlite3"),
 		Server:       path.Join(dir, "Development", "go", "src", "github.com", "zombull", "floating-castle", "server"),
+		Password:     "",
 		MoonboardSet: "MoonBoard 2016",
 	}
 
@@ -78,6 +84,7 @@ func loadConfig() *Config {
 	c.Cache = loadEnvVar("CACHE", c.Cache)
 	c.Database = loadEnvVar("DATABASE", c.Database)
 	c.Server = loadEnvVar("SERVER", c.Server)
+	c.Password = loadEnvVar("PASSWORD", c.Password)
 	c.MoonboardSet = loadEnvVar("MOONBOARD_SET", c.MoonboardSet)
 
 	bug.On(len(c.Cache) == 0, "CACHE must be a non-empty string")

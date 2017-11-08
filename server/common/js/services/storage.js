@@ -102,13 +102,12 @@ host.factory('storage', function ($http, $q, bug, schema) {
         },
 
         set: function(key, value) {
-            if (schema.metadata.hasOwnProperty(key)) {
-                if (schema.metadata[key].local) {
-                    localStorage.setItem(key, value);
-                }
-                else {
-                    postMessage(schema.metadata[key].subdomain, { method: 'set', key: key, value: value });
-                }
+            bug.on(!schema.metadata.hasOwnProperty(key), 'No metadata for {0}'.format(key));
+            if (schema.metadata[key].local) {
+                localStorage.setItem(key, value);
+            }
+            else {
+                postMessage(schema.metadata[key].subdomain, { method: 'set', key: key, value: value });
             }
         }
     };
@@ -119,6 +118,8 @@ host.factory('storage', function ($http, $q, bug, schema) {
     };
 
     function deposit(name, value, update) {
+        bug.on(!schema.metadata.hasOwnProperty(name), 'No metadata for {0}'.format(name));
+
         // Do not overwrite existing data unless explicit requested to do so
         // as part of an update.  This prevents overwriting an update with
         // stale data from local storage.
@@ -127,6 +128,10 @@ host.factory('storage', function ($http, $q, bug, schema) {
             if (update) {
                   substorage.set(name, JSON.stringify(value));
             }
+        }
+
+        if (schema.metadata[name].ephemeral) {
+            return;
         }
 
         if (update || !cache.checksums.hasOwnProperty(name)) {

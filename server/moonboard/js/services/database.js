@@ -1,7 +1,7 @@
 /**
  * Service for making queries to the database.
 */
-moon.factory('database', function ($q, bug, grades, storage, schema) {
+moon.factory('database', function ($http, $q, bug, grades, storage, schema) {
     'use strict';
 
     var update = false;
@@ -110,6 +110,9 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                 callback(data.setters);
             });
         },
+        password: function(password) {
+            storage.set('password', password);
+        },
         project: {
             get: function(problem, scope, callback) {
                 getData(scope, function(data) {
@@ -137,14 +140,14 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
             }
         },
         tock: {
-            add: function(tock, scope, callback) {
+            add: function(problemUrl, tock, scope, callback) {
                 getData(scope, function(data) {
-                    bug.on(!data.problems.hasOwnProperty(tock.p));
-                    var problem = data.index.problems[data.problems[tock.p]];
+                    bug.on(!data.problems.hasOwnProperty(problemUrl));
+                    var problem = data.index.problems[data.problems[problemUrl]];
                     bug.on(problem.t !== null);
 
-                    if (data.projects.hasOwnProperty(tock.p)) {
-                        delete data.projects[tock.p];
+                    if (data.projects.hasOwnProperty(problemUrl)) {
+                        delete data.projects[problemUrl];
                         storage.set('projects', data.projects);
                     }
 
@@ -153,9 +156,24 @@ moon.factory('database', function ($q, bug, grades, storage, schema) {
                     problem.s = tock.s;
                     problem.v = grades.convert(problem.g);
 
-                    bug.on(data.tocks.hasOwnProperty(tock.p));
-                    data.tocks[tock.p] = tock;
+                    bug.on(data.tocks.hasOwnProperty(problemUrl));
+                    data.tocks[problemUrl] = tock;
                     storage.set('tocks', data.tocks);
+                    if (data.hasOwnProperty('password')) {
+                        var tocks = {
+                            password: data.password,
+                            tocks: _.values(data.tocks),
+                        };
+                        $http.post('data/tocks', JSON.stringify(tocks)).then(
+                            function(response) {
+                                console.log(response);
+                            },
+                            function(response) {
+                                console.log(response);
+                                alert(response.data.message);
+                            }
+                        );
+                    }
                     callback();
                 });
             },
