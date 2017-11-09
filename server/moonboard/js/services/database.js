@@ -26,7 +26,9 @@ moon.factory('database', function ($http, $q, bug, grades, storage, schema) {
     function fetch(key) {
         if (key) {
             storage.get(key, getStorage.bind(null, function(val) {
-                data[key] = val;
+                if (val) {
+                    data[key] = val;
+                }
                 fetch(keys.shift());
             }));
         } else {
