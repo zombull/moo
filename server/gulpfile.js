@@ -18,7 +18,6 @@ var del = require('del'),
 var source = {
     js: ['moonboard/js/app.js', 'common/js/**/*.js', 'moonboard/js/**/*.js'],
     css: ['common/css/**/*.css', 'moonboard/css/**/*.css'],
-    data: 'moonboard/data/**/*.*',
     html: ['common/html/**/*.html', 'moonboard/html/**/*.html'],
     index: 'moonboard/index.html',
     images: ['common/img/**/*', 'moonboard/img/**/*'],
@@ -87,9 +86,6 @@ gulp.task('server', /*['checksums'],*/ function() {
         .pipe(rename({extname: ".min.js"}))                     // Rename the stream
         .pipe(uglify())
         .pipe(gulp.dest(server + '/js'));
-
-    gulp.src(source.data)
-        .pipe(gulp.dest(server + '/data'));
 
     gulp.src(source.fonts)
         .pipe(gulp.dest(server + '/css'));

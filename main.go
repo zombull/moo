@@ -17,7 +17,7 @@ func main() {
 
 	moonboard.Init(d, c.MoonboardSet)
 
-	s := server.Init(d, c.Server, c.Password)
+	s := server.Init(d, c.Server, c.Cache, c.Password)
 
 	if len(os.Args) == 1 {
 		interactive.Run(d, s)

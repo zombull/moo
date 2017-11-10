@@ -22,28 +22,27 @@ import (
 )
 
 type KeyValueStore struct {
-	root string
-	dir  string
-	data map[string][]byte
-	sums map[string][]byte
+	server string
+	cache  string
+	data   map[string][]byte
+	sums   map[string][]byte
 	// client *redis.Client
 }
 
-func newStore(root string) *KeyValueStore {
+func newStore(server, cache string) *KeyValueStore {
 	s := KeyValueStore{
-		dir:  root,
-		data: make(map[string][]byte),
-		sums: make(map[string][]byte),
+		server: server,
+		cache:  cache,
+		data:   make(map[string][]byte),
+		sums:   make(map[string][]byte),
 	}
 
-	dataDir := path.Join(s.dir, "data")
-
-	infos, err := ioutil.ReadDir(dataDir)
+	infos, err := ioutil.ReadDir(s.cache)
 	bug.OnError(err)
 
 	for _, fi := range infos {
 		if fi.Mode().IsRegular() {
-			name := path.Join(dataDir, fi.Name())
+			name := path.Join(s.cache, fi.Name())
 
 			if strings.HasSuffix(fi.Name(), ".json") {
 				s.data[strings.TrimSuffix(fi.Name(), ".json")], err = ioutil.ReadFile(name)
@@ -339,7 +338,7 @@ func (s *KeyValueStore) update(d *database.Database) {
 		}
 	}
 
-	imgDir := path.Join(s.dir, "img")
+	imgDir := path.Join(s.server, "img")
 	for i := 0; i < 150; i++ {
 		if i > 40 && i < 50 {
 			continue
@@ -353,14 +352,13 @@ func (s *KeyValueStore) update(d *database.Database) {
 
 		md.Images[i] = base64.StdEncoding.EncodeToString(img)
 	}
-	dataDir := path.Join(s.dir, "data")
 
-	s.export("moonboard.index.problems", dataDir, md.Index.Problems)
-	s.export("moonboard.index.setters", dataDir, md.Index.Setters)
-	s.export("moonboard.images", dataDir, md.Images)
-	s.export("moonboard.problems", dataDir, md.Problems)
-	s.export("moonboard.setters", dataDir, md.Setters)
-	s.export("moonboard.ticks", dataDir, md.Ticks)
+	s.export("moonboard.index.problems", s.cache, md.Index.Problems)
+	s.export("moonboard.index.setters", s.cache, md.Index.Setters)
+	s.export("moonboard.images", s.cache, md.Images)
+	s.export("moonboard.problems", s.cache, md.Problems)
+	s.export("moonboard.setters", s.cache, md.Setters)
+	s.export("moonboard.ticks", s.cache, md.Ticks)
 }
 
 type betaEntry struct {

@@ -16,21 +16,23 @@ const domain = "zombull.xyz"
 
 type Server struct {
 	dir      string
+	cache    string
 	password string
 	db       *database.Database
 	store    *KeyValueStore
 }
 
-func Init(d *database.Database, root, password string) *Server {
+func Init(d *database.Database, server, cache, password string) *Server {
 	return &Server{
 		db:       d,
-		dir:      root,
+		dir:      server,
+		cache:    cache,
 		password: password,
 	}
 }
 
 func (s *Server) Run(port string, release bool) {
-	s.store = newStore(path.Join(s.dir, "moonboard"))
+	s.store = newStore(path.Join(s.dir, "moonboard"), path.Join(s.cache, "moonboard"))
 	common := path.Join(s.dir, "common")
 	if release {
 		common = path.Join(s.dir, "moonboard")
@@ -86,7 +88,7 @@ func (s *Server) Run(port string, release bool) {
 }
 
 func (s *Server) Update() {
-	s.store = newStore(path.Join(s.dir, "moonboard"))
+	s.store = newStore(path.Join(s.dir, "moonboard"), path.Join(s.cache, "moonboard"))
 	s.store.update(s.db)
 }
 
