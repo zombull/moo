@@ -20,9 +20,9 @@ type moonOpts struct {
 	ticks bool
 }
 
-func moonCmd(d *database.Database, cache string) *cobra.Command {
+func moonCmd(db func() *database.Database, cache string) *cobra.Command {
 	opts := moonOpts{
-		d:     d,
+		d:     db(),
 		cache: cache,
 	}
 

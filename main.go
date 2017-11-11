@@ -7,21 +7,20 @@ import (
 	"github.com/zombull/floating-castle/database"
 	"github.com/zombull/floating-castle/interactive"
 	"github.com/zombull/floating-castle/moonboard"
-	"github.com/zombull/floating-castle/server"
 )
 
 func main() {
 	c := loadConfig()
 
-	d := database.Init(c.Database)
-
-	moonboard.Init(d, c.MoonboardSet)
-
-	s := server.Init(d, c.Server, c.Cache)
+	db := func() *database.Database {
+		d := database.Init(c.Database)
+		moonboard.Init(d, c.MoonboardSet)
+		return d
+	}
 
 	if len(os.Args) == 1 {
-		interactive.Run(d, s)
+		interactive.Run(db())
 	} else {
-		cmd.Run(d, s, c.Cache)
+		cmd.Run(db, c.Cache, c.Server)
 	}
 }

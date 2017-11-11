@@ -29,7 +29,7 @@ type KeyValueStore struct {
 	// client *redis.Client
 }
 
-func newStore(server, cache string) *KeyValueStore {
+func NewStore(server, cache string) *KeyValueStore {
 	s := KeyValueStore{
 		server: server,
 		cache:  cache,
@@ -207,7 +207,7 @@ func getSetterUrl(s string) string {
 	return "s/" + url.PathEscape(sanitize(s))
 }
 
-func (s *KeyValueStore) update(d *database.Database) {
+func (s *KeyValueStore) Update(d *database.Database) {
 	setters := d.GetSetters(moonboard.Id(d))
 	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", moonboard.Id(d)))
 

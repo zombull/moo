@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/labstack/echo"
-	"github.com/zombull/floating-castle/database"
 )
 
 const domain = "zombull.xyz"
@@ -14,20 +13,18 @@ const domain = "zombull.xyz"
 type Server struct {
 	dir   string
 	cache string
-	db    *database.Database
 	store *KeyValueStore
 }
 
-func Init(d *database.Database, server, cache string) *Server {
+func Init(server, cache string) *Server {
 	return &Server{
-		db:    d,
 		dir:   server,
 		cache: cache,
 	}
 }
 
 func (s *Server) Run(port string, release bool) {
-	s.store = newStore(path.Join(s.dir, "moonboard"), path.Join(s.cache, "moonboard"))
+	s.store = NewStore(path.Join(s.dir, "moonboard"), path.Join(s.cache, "moonboard"))
 	common := path.Join(s.dir, "common")
 	if release {
 		common = path.Join(s.dir, "moonboard")
@@ -77,9 +74,4 @@ func (s *Server) Run(port string, release bool) {
 		return echo.ErrNotFound
 	})
 	e.Logger.Fatal(e.Start(port))
-}
-
-func (s *Server) Update() {
-	s.store = newStore(path.Join(s.dir, "moonboard"), path.Join(s.cache, "moonboard"))
-	s.store.update(s.db)
 }

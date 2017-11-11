@@ -16,7 +16,6 @@ import (
 	"github.com/zombull/floating-castle/bug"
 	"github.com/zombull/floating-castle/database"
 	"github.com/zombull/floating-castle/moonboard"
-	"github.com/zombull/floating-castle/server"
 )
 
 type op interface {
@@ -37,7 +36,7 @@ var ops = map[string]op{
 	"stats":  &statsOp{},
 }
 
-func Run(d *database.Database, s *server.Server) {
+func Run(d *database.Database) {
 	m := ops
 	m["import"] = nil
 	m["export"] = nil

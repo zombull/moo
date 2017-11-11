@@ -3,20 +3,20 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/zombull/floating-castle/database"
 	"github.com/zombull/floating-castle/server"
 )
 
 type serveOpts struct {
-	s       *server.Server
-	update  bool
+	server  string
+	cache   string
 	port    string
 	release bool
 }
 
-func serveCmd(d *database.Database, s *server.Server) *cobra.Command {
+func serveCmd(server, cache string) *cobra.Command {
 	opts := serveOpts{
-		s: s,
+		server: server,
+		cache:  cache,
 	}
 
 	cmd := &cobra.Command{
@@ -27,7 +27,6 @@ func serveCmd(d *database.Database, s *server.Server) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.update, "update", "u", false, "Update storage from database")
 	cmd.Flags().StringVarP(&opts.port, "port", "p", "", "Port to run the server on")
 	cmd.Flags().BoolVarP(&opts.release, "release", "r", false, "Use release directories")
 
@@ -35,12 +34,10 @@ func serveCmd(d *database.Database, s *server.Server) *cobra.Command {
 }
 
 func serve(opts *serveOpts) {
-	if opts.update {
-		opts.s.Update()
-	} else {
-		if len(opts.port) > 0 {
-			opts.port = ":" + opts.port
-		}
-		opts.s.Run(opts.port, opts.release)
+	s := server.Init(opts.server, opts.cache)
+
+	if len(opts.port) > 0 {
+		opts.port = ":" + opts.port
 	}
+	s.Run(opts.port, opts.release)
 }
