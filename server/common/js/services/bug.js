@@ -13,6 +13,14 @@ host.factory('bug', function () {
                 console.log(message);
                 throw new Error("BUG: " + message);
             }
+        },
+        warn: function(condition, message) {
+            if (condition) {
+                console.trace();
+                console.log(message);
+                return true;
+            }
+            return false;
         }
     };
 });
