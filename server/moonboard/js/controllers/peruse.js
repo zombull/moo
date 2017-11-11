@@ -14,8 +14,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     var __problems = []; // Local list used as the source for problems.
     var perpage = 15;
     var rp = $location.path().split('/')[1].toLowerCase();
-    var showTicks = (rp === 't' || rp === 'k');
-    var showTocks = (rp === 'k');
+    var showTicks = (rp === 't');
     var showProjects = (rp === 'j');
 
     if ($routeParams.page) {
@@ -51,13 +50,13 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
             });
         } else {
             __problems = data.index.problems.filter(function(problem) {
-                return  (!grade || problem.g === grade) && (!showTicks == !problem.t) && (!showTocks || problem.t.hasOwnProperty('p'));
+                return  (!grade || problem.g === grade) && (!showTicks == !problem.t);
             });
         }
 
         if (__problems.length === 0) {
             var meta = $routeParams.grade === 'all' ? '' : $routeParams.grade + ' ';
-            var type = showProjects ? 'projects' : showTocks ? 'tocks' : showTicks ? 'ticks' : 'problems';
+            var type = showProjects ? 'projects' : showTicks ? 'ticks' : 'problems';
             $scope.error = $scope.error || { status: 404, data: 'Did not find any {0}{1}.'.format(meta, type) };
             return;
         }
