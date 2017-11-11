@@ -10,10 +10,8 @@ moon.factory('schema', function () {
         images: { local: true },
         problems: { local: true },
         setters: { local: true },
-        ticks: { local: true },
-        tocks: { local: true, ephemeral: true },
-        projects: { local: true, ephemeral: true },
-        password: { local: true, ephemeral: true },
+        projects: { local: true, drive: true },
+        ticks: { local: true, drive: true },
     };
     var checksums = {
         images: 'd12cd143a2d69484feaa72d1942bb979',
@@ -21,7 +19,6 @@ moon.factory('schema', function () {
         'index.setters': 'f7a3e016aecb0794c60009d3178a7e86',
         problems: 'add80bfd82cfe295bcaff49534af3584',
         setters: '9517ff32978a2f84af205ed5e58f2ee6',
-        ticks: '4922203cafbc20819302bd74cc5301fa',
     };
 
     return {

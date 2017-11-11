@@ -1,4 +1,4 @@
-host.factory('storage', function ($http, $q, bug, schema) {
+host.factory('storage', function ($q, bug, schema) {
     'use strict';
 
     // The iframe may not be listening for our first event, even if we wait until onload,
@@ -76,10 +76,11 @@ host.factory('storage', function ($http, $q, bug, schema) {
             else {
                 if (schema.metadata[key].local) {
                     var local = localStorage.getItem(key);
-                    if (local || schema.metadata[key].ephemeral) {
+                    if (local) {
                         request.resolve(local);
-                    }
-                    else {
+                    } else if (schema.metadata[key].drive) {
+                        request.resolve({});
+                    } else {
                         request.reject();
                     }
                 }
@@ -120,7 +121,7 @@ host.factory('storage', function ($http, $q, bug, schema) {
     function deposit(name, value, update) {
         bug.on(!schema.metadata.hasOwnProperty(name), 'No metadata for {0}'.format(name));
 
-        // Do not overwrite existing data unless explicit requested to do so
+        // Do not overwrite existing data unless explicitly told to do so
         // as part of an update.  This prevents overwriting an update with
         // stale data from local storage.
         if (update || !cache.data.hasOwnProperty(name)) {
@@ -130,7 +131,7 @@ host.factory('storage', function ($http, $q, bug, schema) {
             }
         }
 
-        if (schema.metadata[name].ephemeral) {
+        if (!schema.checksums.hasOwnProperty(name)) {
             return;
         }
 
@@ -138,21 +139,6 @@ host.factory('storage', function ($http, $q, bug, schema) {
             cache.checksums[name] = schema.checksums[name];
             localStorage.setItem('checksums', JSON.stringify(cache.checksums));
         }
-    }
-
-    function doUpdate(name, callback) {
-        // Append the hash as a query string to create a unique URI.  This allows
-        // CDNs to cache the data but guarantees we'll get the latest version, all
-        // without having to store multiple versions on the server.
-        $http.get('data/' + name + '?version=' + schema.checksums[name]).then(
-            function(response) {
-                deposit(name, response.data, true);
-                callback(response.data);
-            },
-            function(response) {
-                callback(null, response);
-            }
-        );
     }
 
     return {
@@ -183,8 +169,5 @@ host.factory('storage', function ($http, $q, bug, schema) {
         set: function(name, data) {
             deposit(name, data, true);
         },
-        update: function(name) {
-            doUpdate(name, function() { });
-        }
     };
 });

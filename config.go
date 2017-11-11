@@ -17,27 +17,22 @@ type Config struct {
 	// to avoid a Catch-22.
 	Config string `yaml:"-"`
 
-	// Cache is the path to the Moonboard directory where files pulled from
-	// moonboard.com will be stored.
+	// Cache is the path to the directory where semi-permanent, non-database
+	// files are stored, e.g. the JSON representation of the database.
 	// Env Var: FC_CACHE
-	// Default: $HOME/Development/go/src/github.com/zombull/floating-castle/moonboard/cache
+	// Default: $HOME/Development/go/src/github.com/zombull/cache-floating-castle
 	Cache string `yaml:"cache"`
 
 	// Database is the path to the directory where the SQLite database
 	// exists (or is created).
 	// Env Var: FC_DATABASE
-	// Default: $HOME/Development/go/src/github.com/zombull/floating-castle/database/sqlite3
+	// Default: $HOME/Development/go/src/github.com/zombull/db-floating-castle/sqlite3
 	Database string `yaml:"database"`
 
 	// Server is the path to the root directory of the web server.
 	// Env Var: FC_SERVER
 	// Default: $HOME/Development/go/src/github.com/zombull/floating-castle/server
 	Server string `yaml:"server"`
-
-	// Password enables tock POSTs when set
-	// Env Var: FC_PASSWORD
-	// Default: ""
-	Password string `yaml:"password"`
 
 	// Specify the Moonboard set, i.e. year and holds combination.
 	// Env Var: FC_MOONBOARD_SET
@@ -65,10 +60,9 @@ func loadConfig() *Config {
 	}
 	c := Config{
 		Config:       path.Join(dir, ".config", "floating-castle", "config.yml"),
-		Cache:        path.Join(dir, "Development", "go", "src", "github.com", "zombull", "cache-floating-castle", "moonboard"),
+		Cache:        path.Join(dir, "Development", "go", "src", "github.com", "zombull", "cache-floating-castle"),
 		Database:     path.Join(dir, "Development", "go", "src", "github.com", "zombull", "db-floating-castle", "sqlite3"),
 		Server:       path.Join(dir, "Development", "go", "src", "github.com", "zombull", "floating-castle", "server"),
-		Password:     "",
 		MoonboardSet: "MoonBoard 2016",
 	}
 
@@ -84,7 +78,6 @@ func loadConfig() *Config {
 	c.Cache = loadEnvVar("CACHE", c.Cache)
 	c.Database = loadEnvVar("DATABASE", c.Database)
 	c.Server = loadEnvVar("SERVER", c.Server)
-	c.Password = loadEnvVar("PASSWORD", c.Password)
 	c.MoonboardSet = loadEnvVar("MOONBOARD_SET", c.MoonboardSet)
 
 	bug.On(len(c.Cache) == 0, "CACHE must be a non-empty string")

@@ -192,7 +192,7 @@ type moonData struct {
 	Problems map[string]int
 	Setters  map[string]int
 	Images   []string
-	Ticks    map[int]moonTick
+	Ticks    map[string]moonTick
 }
 
 func getProblemUrl(s string) string {
@@ -222,7 +222,7 @@ func (s *KeyValueStore) update(d *database.Database) {
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
 		Images:   make([]string, 150),
-		Ticks:    make(map[int]moonTick, 0),
+		Ticks:    make(map[string]moonTick),
 	}
 
 	for _, r := range setters {
@@ -334,7 +334,7 @@ func (s *KeyValueStore) update(d *database.Database) {
 			if t[0].Sessions > 0 {
 				mt.Sessions = t[0].Sessions
 			}
-			md.Ticks[i] = mt
+			md.Ticks[e.Url] = mt
 		}
 	}
 
