@@ -20,8 +20,8 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
         }
 
         database.project.get(name, $scope, function(project) {
-            shadow.attempts = $scope.attempts = project ? project.attempts : 0;
-            shadow.sessions = $scope.sessions = project ? project.sessions : 0;
+            shadow.attempts = $scope.attempts = project ? project.a : 0;
+            shadow.sessions = $scope.sessions = project ? project.s : 0;
             problems.set(data.index.problems);
 
             var me = data.problems[name];
@@ -57,8 +57,8 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
     var updateTimeout = null;
     function queueUpdate() {
         $timeout.cancel(updateTimeout);
-        updateTimeout = $timeout(function(name, attempts, sessions) {
-            database.project.set(name, { attempts: attempts, sessions: sessions }, $scope);
+        updateTimeout = $timeout(function(problemUrl, attempts, sessions) {
+            database.project.add(problemUrl, { a: attempts, s: sessions }, $scope);
             shadow.attempts = attempts;
             shadow.sessions = sessions;
         }, 3000, true, $routeParams.problem, $scope.attempts, $scope.sessions);
