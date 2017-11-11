@@ -11,6 +11,7 @@ import (
 
 	"github.com/zombull/floating-castle/bug"
 	"github.com/zombull/floating-castle/database"
+	"github.com/zombull/floating-castle/moonboard/gd"
 	"github.com/zombull/floating-castle/moonboard/mb"
 )
 
@@ -480,6 +481,45 @@ func SyncTicks(d *database.Database, data []byte) {
 		bug.OnError(err)
 
 		tick.Flash = (tick.Attempts == 1)
+		d.Insert(tick)
+	}
+}
+
+func SyncUserData(d *database.Database, u *gd.UserData) {
+	ticks := make([]*database.Tick, 0, len(u.Ticks))
+	cragId := Id(d)
+	setId := SetId(d)
+	for problem, t := range u.Ticks {
+		route := d.FindRoute(setId, problem)
+		bug.On(route == nil, fmt.Sprintf("'%s' not in database, Moonboard index needs to be synced", problem))
+
+		if existing := d.GetTicks(route.Id); len(existing) > 0 {
+			continue
+		}
+
+		_, ok := database.HuecoToFontainebleau[strings.ToUpper(t.Grade)]
+		bug.On(!ok, fmt.Sprintf("Invalid grade '%s' for problem '%s'", t.Grade, problem))
+
+		tick := &database.Tick{
+			RouteId:  route.Id,
+			AreaId:   setId,
+			CragId:   cragId,
+			Grade:    t.Grade,
+			Stars:    t.Stars,
+			Attempts: t.Attempts,
+			Flash:    t.Attempts == 1,
+			Redpoint: true,
+		}
+		var err error
+		tick.Date, err = time.Parse("January 02, 2006", t.Date)
+		bug.OnError(err)
+
+		if t.Sessions > 0 {
+			tick.Sessions = t.Sessions
+		}
+		ticks = append(ticks, tick)
+	}
+	for _, tick := range ticks {
 		d.Insert(tick)
 	}
 }
