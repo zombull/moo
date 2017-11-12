@@ -2,13 +2,10 @@
 /**
  *
  */
-moon.controller('PeruseController', function PeruseController($scope, $location, $routeParams, moonboard, database, problems, bug) {
+moon.controller('PeruseController', function PeruseController($scope, $location, $routeParams, moonboard, database, problems, history, bug) {
     'use strict';
 
     problems.reset();
-
-    $scope.problem = null;
-    $scope.i = 0; // Current index into __problems
 
     var __data = {}; // The global data list, needed to retrieve setter info.
     var __problems = []; // Local list used as the source for problems.
@@ -16,7 +13,10 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     var rp = $location.path().split('/')[1].toLowerCase();
     var showTicks = (rp === 't');
     var showProjects = (rp === 'j');
+    var historyKey = rp + '.' + $routeParams.grade.toLowerCase();
 
+    $scope.problem = null;
+    $scope.i = history.get(historyKey, 0); // Current index into __problems
     $scope.title = showProjects ? 'Projects' : showTicks ? 'Ticks' : 'Problems';
 
     if ($routeParams.page) {
@@ -88,8 +88,9 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     function update(i) {
         $scope.i = i;
         $scope.problem = __problems[$scope.i];
-        moonboard.set($scope.problem.h);
         $scope.setter = __data.index.setters[$scope.problem.e];
+        moonboard.set($scope.problem.h);
+        history.set(historyKey, $scope.i);
 
         if (__problems.length > perpage) {
             $scope.list = [];
