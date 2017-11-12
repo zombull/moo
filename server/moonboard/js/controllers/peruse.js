@@ -37,17 +37,25 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
         }
     }
 
+    function problemsFromMap(m, data) {
+        var p = [];
+        _.each(m, function(v, k) {
+            bug.on(!data.problems.hasOwnProperty(k));
+            var problem = data.index.problems[data.problems[k]];
+            if (!grade || problem.g === grade) {
+                p.push(problem);
+            }
+        });
+        return p;
+    }
+
     database.all(function(data) {
         __data = data;
 
         if (showProjects) {
-            _.each(data.projects, function(v, k) {
-                bug.on(!data.problems.hasOwnProperty(k));
-                var problem = data.index.problems[data.problems[k]];
-                if (!grade || problem.g === grade) {
-                    __problems.push(problem);
-                }
-            });
+            __problems = problemsFromMap(data.projects, data);
+        } else if (showTicks) {
+            __problems = problemsFromMap(data.ticks, data);
         } else {
             __problems = data.index.problems.filter(function(problem) {
                 return  (!grade || problem.g === grade) && (!showTicks == !problem.t);
