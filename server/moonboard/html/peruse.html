@@ -15,7 +15,7 @@
         <problem-info problem="problem" setter="setter"></problem-info>
 
         <md-subheader class="md-no-sticky md-accent" ng-if="list" ng-cloak>
-            <h2><div>Problems ({{::count}})</div></h2>
+            <h2><div>{{::title}} ({{::count}})</div></h2>
             <md-divider></md-divider><br>
             <div>
                 <div ng-repeat="p in list track by p.u" ng-bind-html="p | linkify"></div>

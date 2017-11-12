@@ -17,6 +17,8 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     var showTicks = (rp === 't');
     var showProjects = (rp === 'j');
 
+    $scope.title = showProjects ? 'Projects' : showTicks ? 'Ticks' : 'Problems';
+
     if ($routeParams.page) {
         var page = parseInt($routeParams.page);
         if (isNaN(page)) {
@@ -64,8 +66,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
 
         if (__problems.length === 0) {
             var meta = $routeParams.grade === 'all' ? '' : $routeParams.grade + ' ';
-            var type = showProjects ? 'projects' : showTicks ? 'ticks' : 'problems';
-            $scope.error = $scope.error || { status: 404, data: 'Did not find any {0}{1}.'.format(meta, type) };
+            $scope.error = $scope.error || { status: 404, data: 'Did not find any {0}{1}.'.format(meta, $scope.title) };
             return;
         }
         problems.set(__problems);
