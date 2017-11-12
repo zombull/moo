@@ -276,7 +276,7 @@ func (s *KeyValueStore) Update(d *database.Database) {
 			Url:           getProblemUrl(r.Url),
 			Name:          r.Name,
 			LowerCaseName: strings.ToLower(r.Name),
-			Date:          r.Date.Format("January 02, 2006"),
+			Date:          r.Date.Format("2006-01-02"), // 'yyyy-MM-dd'
 			Setter:        setter,
 			Grade:         r.Grade,
 			Stars:         r.Stars,

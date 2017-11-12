@@ -6,12 +6,12 @@
     <table cellpadding="0" cellspacing="0">
         <tbody>
             <tr><td valign="top">Setter</td><td ng-bind-html="$ctrl.setter | linkify"></td></tr>
-            <tr ng-if="$ctrl.problem.d"><td valign="top">Date</td><td>{{$ctrl.problem.d}}</td></tr>
+            <tr ng-if="$ctrl.problem.d"><td valign="top">Date</td><td>{{$ctrl.problem.d | date:'LLLL dd, yyyy'}}</td></tr>
             <tr ng-if="$ctrl.problem.s"><td valign="top">Stars</td><td><span ng-repeat="s in [].constructor($ctrl.problem.s) track by $index">&#x2605;</span></td></tr>
             <tr ng-if="!$ctrl.problem.s"><td valign="top">Stars</td><td>&#x2620;</td></tr>
             <tr ng-if="$ctrl.problem.a"><td valign="top">Ascents</td><td>{{$ctrl.problem.a}}</td></tr>
             <tr ng-if="!$ctrl.problem.a"><td valign="top">Ascents</td><td><span>&#x2620;</span></td></tr>
-            <tr ng-if="$ctrl.problem.t"><td valign="top">Ticked</td><td>{{$ctrl.problem.t.d}}</td></tr>
+            <tr ng-if="$ctrl.problem.t"><td valign="top">Ticked</td><td>{{$ctrl.problem.t.d | date:'LLLL dd, yyyy'}}</td></tr>
             <tr ng-if="$ctrl.problem.t"><td valign="top">Attempts</td><td>{{$ctrl.problem.t.a}}</td></tr>
             <tr ng-if="$ctrl.problem.t && $ctrl.problem.t.e"><td valign="top">Sessions</td><td>{{$ctrl.problem.t.e}}</td></tr>
         </tbody>

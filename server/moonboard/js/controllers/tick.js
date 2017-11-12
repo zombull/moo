@@ -17,9 +17,12 @@ moon.controller('TickController', function($scope, $mdDialog, $filter, database,
 
     $scope.tock = function() {
         // The variable names/keys matter as the object will be directly
-        // serialized to storage, i.e. this is the tick schema.
+        // serialized to storage, i.e. this is the tick schema.  The date
+        // form matters as it's the shortest storage that angular's date
+        // filter will accept as input (dates are displayed with a more
+        // user friendly input, just cutting down on bytes here...).
         database.tick.add(problem.u, {
-            d: $filter('date')($scope.tick.date, 'LLLL dd, yyyy'),
+            d: $filter('date')($scope.tick.date, 'yyyy-MM-dd'),
             g: $scope.tick.grade,
             s: parseInt($scope.tick.stars),
             a: $scope.tick.attempts,
