@@ -171,6 +171,9 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
             },
             rm: function(problemUrl, scope) {
                 getData(scope, function(data) {
+                    bug.on(!data.problems.hasOwnProperty(problemUrl));
+                    bug.on(!data.ticks.hasOwnProperty(problemUrl));
+                    data.index.problems[data.problems[problemUrl]].t = null;
                     userdata.rm('ticks', data, problemUrl).sync();
                 });
             }

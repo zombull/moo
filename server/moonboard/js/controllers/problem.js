@@ -46,6 +46,19 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
             moonboard.load().then(
                 function() {
                     moonboard.set(problem.h);
+
+                    if (problem.t && $routeParams.nuke === 'tick') {
+                        $mdDialog.show({
+                            controller: 'ConfirmController',
+                            controllerAs: 'ctrl',
+                            locals: { prompt: 'Nuke tick?', buttons: { cancel: '2620', confirm: '2622' } },
+                            ariaLabel: 'confirm-dialog',
+                            templateUrl: 'common/html/confirm.html',
+                            clickOutsideToClose: true,
+                        }).then(function(source) {
+                            database.tick.rm(problem.u, $scope);
+                        }).catch(function() {});
+                    }
                 },
                 function() {
                     $scope.error = $scope.error || { status: 500, data: 'Failed to load Moonboard' };
