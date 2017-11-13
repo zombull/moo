@@ -2,30 +2,19 @@
 /**
  *
  */
-moon.controller('PeruseController', function PeruseController($scope, $location, $routeParams, moonboard, database, problems, history, bug) {
+moon.controller('PeruseController', function PeruseController($scope, $location, $routeParams, bug, browse, database, history) {
     'use strict';
 
-    problems.reset();
-
-    var __data = {}; // The global data list, needed to retrieve setter info.
     var __problems = []; // Local list used as the source for problems.
-    var perpage = 15;
     var rp = $location.path().split('/')[1].toLowerCase();
     var showTicks = (rp === 't');
     var showProjects = (rp === 'j');
     var historyKey = rp + '.' + $routeParams.grade.toLowerCase();
 
-    $scope.problem = null;
-    $scope.i = history.get(historyKey, 0); // Current index into __problems
     $scope.title = showProjects ? 'Projects' : showTicks ? 'Ticks' : 'Problems';
 
-    if ($routeParams.page) {
-        var page = parseInt($routeParams.page);
-        if (isNaN(page)) {
-            $scope.error = $scope.error || { status: 404, data: '"' + $routeParams.page + '" is not a page number.' };
-            return;
-        }
-        $scope.i = $routeParams.page * perpage;
+    if (!browse.ready($scope, $routeParams.page, history.get(historyKey, 0))) {
+        return;
     }
 
     var grade = $routeParams.grade.toUpperCase();
@@ -52,8 +41,6 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     }
 
     database.all(function(data) {
-        __data = data;
-
         if (showProjects) {
             __problems = problemsFromMap(data.projects, data);
         } else if (showTicks) {
@@ -72,52 +59,10 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
             $scope.error = $scope.error || { status: 404, data: 'Did not find any {0}{1}.'.format(meta, $scope.title) };
             return;
         }
-        problems.set(__problems);
-        $scope.count = __problems.length;
 
-        moonboard.load().then(
-            function() {
-                update(Math.min($scope.i, __problems.length - 1));
-            },
-            function() {
-                $scope.error = $scope.error || { status: 500, data: 'Failed to load Moonboard' };
-            }
-        );
+        browse.go($scope, __problems, function(i) {
+            $scope.setter = data.index.setters[$scope.problem.e];
+            history.set(historyKey, $scope.i);
+        });
     }, $scope);
-
-    function update(i) {
-        $scope.i = i;
-        $scope.problem = __problems[$scope.i];
-        $scope.setter = __data.index.setters[$scope.problem.e];
-        moonboard.set($scope.problem.h);
-        history.set(historyKey, $scope.i);
-
-        if (__problems.length > perpage) {
-            $scope.list = [];
-            var start = Math.min($scope.i, __problems.length - perpage - 1);
-            $scope.list = _.slice(__problems, start, start + perpage);
-        } else {
-            $scope.list = __problems;
-        }
-    }
-
-    $scope.ppage = function (event) {
-        update(Math.max($scope.i - perpage, 0));
-    };
-    $scope.prev = function (event) {
-        if ($scope.i > 0) {
-            update($scope.i-1);
-        }
-    };
-    $scope.rand = function (event) {
-        update(Math.floor(Math.random() * __problems.length));
-    };
-    $scope.next = function (event) {
-        if ($scope.i < (__problems.length - 1)) {
-            update($scope.i+1);
-        }
-    };
-    $scope.npage = function (event) {
-        update(Math.min($scope.i + perpage, __problems.length - 1));
-    };
 });
