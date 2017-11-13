@@ -11,23 +11,23 @@ moon.config(function($routeProvider, $locationProvider) {
         controller: 'AirTrafficController as ctrl'
     })
     .when('/p/:grade', {
-        templateUrl: 'static/html/peruse.html',
+        templateUrl: 'static/html/browse.html',
         controller: 'PeruseController as ctrl'
     })
     .when('/t/:grade', {
-        templateUrl: 'static/html/peruse.html',
+        templateUrl: 'static/html/browse.html',
         controller: 'PeruseController as ctrl'
     })
     .when('/j/:grade', {
-        templateUrl: 'static/html/peruse.html',
+        templateUrl: 'static/html/browse.html',
         controller: 'PeruseController as ctrl'
     })
     .when('/s/:setter', {
-        templateUrl: 'static/html/peruse.html',
+        templateUrl: 'static/html/browse.html',
         controller: 'SetterController as ctrl'
     })
     .when('/st/:setter', {
-        templateUrl: 'static/html/peruse.html',
+        templateUrl: 'static/html/browse.html',
         controller: 'SetterController as ctrl'
     })
     .when('/:problem', {
