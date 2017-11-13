@@ -13,7 +13,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
 
     $scope.title = showProjects ? 'Projects' : showTicks ? 'Ticks' : 'Problems';
 
-    if (!browse.ready($scope, $routeParams.page, history.get(historyKey, 0))) {
+    if (!browse.ready($scope, $routeParams.page, historyKey)) {
         return;
     }
 

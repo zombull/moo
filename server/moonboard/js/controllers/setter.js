@@ -2,22 +2,24 @@
 /**
  *
  */
-moon.controller('SetterController', function SetterController($scope, $location, $routeParams, bug, browse, database) {
+moon.controller('SetterController', function SetterController($scope, $location, $routeParams, bug, browse, database, history) {
     'use strict';
 
     var __problems = []; // Local list used as the source for problems.
-    var showTicks = ($location.path().split('/')[1].toLowerCase() === 'st');
+    var rp = $location.path().split('/')[1].toLowerCase();
+    var showTicks = (rp === 'st');
+    var historyKey = rp + '.' + $routeParams.setter.toLowerCase();
 
     $scope.title = showTicks ? 'Ticks' : 'Problems';
-
-    if (!browse.ready($scope, $routeParams.page, 0)) {
-        return;
-    }
 
     database.all(function(data) {
         var skey = 's/' + $routeParams.setter.toLowerCase();
         if (!data.setters.hasOwnProperty(skey)) {
             $scope.error = $scope.error || { status: 404, data: 'Did not find a setter matching "' + $routeParams.setter + '"' };
+            return;
+        }
+
+        if (!browse.ready($scope, $routeParams.page, historyKey)) {
             return;
         }
 
@@ -38,6 +40,8 @@ moon.controller('SetterController', function SetterController($scope, $location,
             return;
         }
 
-        browse.go($scope, __problems, function() {});
+        browse.go($scope, __problems, function(i) {
+            history.set(historyKey, $scope.i, true);
+        });
     });
 });

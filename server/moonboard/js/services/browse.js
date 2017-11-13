@@ -1,10 +1,10 @@
-moon.factory('browse', function (moonboard, problems) {
+moon.factory('browse', function ($q, moonboard, problems, history) {
     'use strict';
 
     var perpage = 15;
 
     return {
-        ready: function(scope, startPage, alt) {
+        ready: function(scope, startPage, historyKey) {
             problems.reset();
 
             scope.problem = null;
@@ -17,7 +17,7 @@ moon.factory('browse', function (moonboard, problems) {
                 }
                 scope.i = startPage * perpage;
             } else {
-                scope.i = alt;
+                scope.i = history.get(historyKey, 0);
             }
             return true;
         },
@@ -25,20 +25,25 @@ moon.factory('browse', function (moonboard, problems) {
             problems.set(__problems);
             scope.count = __problems.length;
 
+            var loaded = $q.defer();
             var update = function(i) {
-                scope.i = i;
-                scope.problem = __problems[scope.i];
-                moonboard.set(scope.problem.h);
-                callback();
+                loaded.promise.then(function() {
+                    scope.i = i;
+                    scope.problem = __problems[scope.i];
+                    moonboard.set(scope.problem.h);
+                    callback();
 
-                if (__problems.length > perpage) {
-                    scope.list = [];
-                    var start = Math.min(scope.i, __problems.length - perpage);
-                    scope.list = _.slice(__problems, start, start + perpage);
-                } else {
-                    scope.list = __problems;
-                }
+                    if (__problems.length > perpage) {
+                        scope.list = [];
+                        var start = Math.min(scope.i, __problems.length - perpage);
+                        scope.list = _.slice(__problems, start, start + perpage);
+                    } else {
+                        scope.list = __problems;
+                    }
+                }, function() {});
             };
+
+            update(Math.min(scope.i, __problems.length - 1));
 
             scope.ppage = function (event) {
                 update(Math.max(scope.i - perpage, 0));
@@ -62,10 +67,11 @@ moon.factory('browse', function (moonboard, problems) {
 
             moonboard.load().then(
                 function() {
-                    update(Math.min(scope.i, __problems.length - 1));
+                    loaded.resolve();
                 },
                 function() {
                     scope.error = scope.error || { status: 500, data: 'Failed to load Moonboard' };
+                    loaded.reject();
                 }
             );
         }

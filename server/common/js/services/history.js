@@ -11,13 +11,18 @@ moon.factory('history', function () {
     };
 
     var h = ls.get() || {};
+    var e = {};
     return {
         get: function(p, alt) {
-            return h.hasOwnProperty(p) ? h[p] : alt;
+            return h.hasOwnProperty(p) ? h[p] : e.hasOwnProperty(p) ? e[p] : alt;
         },
-        set: function(p, val) {
-            h[p] = val;
-            ls.set(h);
+        set: function(p, val, ephemeral) {
+            if (!ephemeral) {
+                h[p] = val;
+                ls.set(h);
+            } else {
+                e[p] = val;
+            }
         },
     };
 });

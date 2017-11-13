@@ -1,12 +1,17 @@
 moon.factory('inspector', function ($location, $q, database, problems, calculator, grades, truthiness) {
     'use strict';
 
-    var filter = function(options, index) {
+    // Keep track of the last results, this is used when browsing
+    // search results to remember the last search, especially when
+    // bouncing around the history.
+    var __results = [];
+
+    var filter = function(options, index, browsing) {
         if (options.benchmark !== null || options.ticked !== null || options.grade || options.ascents ||
             options.stars || options.query || options.setby || options.setter) {
 
             options.query = options.query.replace(/^\s+/, '');
-            return index.filter(function(entry) {
+            __results = index.filter(function(entry) {
                 /*
                  * Short circuit employed, keep less expensive operations early
                  * and move more expensive operations to the end, i.e. boolean
@@ -20,6 +25,10 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                         (!options.setby || options.setby.hasOwnProperty(entry.e)) &&
                         (!options.query || entry.l.indexOf(options.query) !== -1);
             });
+            if (!browsing && __results.length > 1) {
+                __results.unshift({ n: '*** Browse Results ***', u: 'q/' + encodeURI(options.raw) });
+            }
+            return __results;
         }
         return index;
     };
@@ -60,11 +69,15 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
     }
 
     return {
-        search: function (query) {
+        search: function (query, browsing) {
+            if (browsing) {
+                problems.set(__results);
+            }
+
             var deferred = $q.defer();
             if (query) {
                 var min, max;
-                var options = { query: ' ' + query.toLowerCase() };
+                var options = { raw: query.toLowerCase(), query: ' ' + query.toLowerCase() };
 
                 options.benchmark = truthiness(processRegEx(options, regExs.benchmark));
                 options.ticked = truthiness(processRegEx(options, regExs.ticked));
@@ -116,10 +129,10 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                                 options.setby[id] = true;
                             }
                         });
-                        deferred.resolve(filter(options, problems.get()));
+                        deferred.resolve(filter(options, problems.get(), browsing));
                     });
                 } else {
-                    deferred.resolve(filter(options, problems.get()));
+                    deferred.resolve(filter(options, problems.get(), browsing));
                 }
             }
             else {

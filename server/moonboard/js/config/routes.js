@@ -10,6 +10,10 @@ moon.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/html/atc.html',
         controller: 'AirTrafficController as ctrl'
     })
+    .when('/q/:query', {
+        templateUrl: 'static/html/browse.html',
+        controller: 'QueryController as ctrl'
+    })
     .when('/p/:grade', {
         templateUrl: 'static/html/browse.html',
         controller: 'PeruseController as ctrl'

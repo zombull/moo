@@ -33,7 +33,7 @@ func (s *Server) Run(port string, release bool) {
 	moon := echo.New()
 
 	index := path.Join(s.dir, "moonboard", "index.html")
-	for _, r := range []string{"/", "/:problem", "/p/:grade", "/t/:grade", "/k/:grade", "/j/:grade", "/s/:setter", "/st/:setter"} {
+	for _, r := range []string{"/", "/:problem", "/q/:query", "/p/:grade", "/t/:grade", "/k/:grade", "/j/:grade", "/s/:setter", "/st/:setter"} {
 		moon.File(r, index)
 	}
 
