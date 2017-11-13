@@ -62,7 +62,6 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
     return {
         search: function (query) {
             var deferred = $q.defer();
-            var autoclear = false;
             if (query) {
                 var min, max;
                 var options = { query: ' ' + query.toLowerCase() };
