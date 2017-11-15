@@ -265,9 +265,10 @@ moon.factory('moonboard', function ($q, $document, database) {
             });
             borders = [];
 
-            setHolds(holds.s, "rgba(0,0,0,1)");
-            setHolds(holds.i, "rgba(255,57,0,1)");
-            setHolds(holds.f, "rgba(0,0,0,1)");
+            var h = holds.split(',');
+            setHolds(h[0].match(/([A-Z][0-9]+)/g), "rgba(0,0,0,1)");
+            setHolds(h[1].match(/([A-Z][0-9]+)/g), "rgba(255,57,0,1)");
+            setHolds(h[2].match(/([A-Z][0-9]+)/g), "rgba(0,0,0,1)");
 
             // Sort the children so that the board (z==0) is at the bottom
             // of the canvas, holds without borders are in the middle, and

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -378,17 +379,25 @@ func SyncProblems(d *database.Database, data []byte) {
 		bug.OnError(err)
 
 		holds := &database.Holds{
-			Holds: make([]string, len(p.Holds)),
+			Holds: make([]string, 0, len(p.Holds)),
 		}
-		for i, h := range p.Holds {
+
+		holdMap := make(map[string]string)
+		for _, h := range p.Holds {
 			t := "i"
 			if h.IsStart {
 				t = "s"
 			} else if h.IsEnd {
 				t = "f"
 			}
-			holds.Holds[i] = t + h.Location
+			if to, ok := holdMap[h.Location]; ok {
+				bug.On(t != to, fmt.Sprintf("Duplicate hold '%s' of different type in problem '%s'", h.Location, name))
+			} else {
+				holds.Holds = append(holds.Holds, t+h.Location)
+				holdMap[h.Location] = t
+			}
 		}
+		sort.Strings(holds.Holds)
 
 		d.InsertDoubleLP(route, holds)
 	}

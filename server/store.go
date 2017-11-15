@@ -147,9 +147,9 @@ func (s *KeyValueStore) export(k, d string, v interface{}) {
 }
 
 type holds struct {
-	Start        []string `json:"s"`
-	Intermediate []string `json:"i"`
-	Finish       []string `json:"f"`
+	Holds  string `json:"h"`
+	Start  int    `json:"s"`
+	Finish int    `json:"f"`
 }
 
 // moonEntry holds the actual data for a problem or a setter.
@@ -165,7 +165,7 @@ type moonEntry struct {
 	Id            int    `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
 	Date          string `json:"d,omitempty"`
 	Nickname      string `json:"k,omitempty"`
-	Holds         *holds `json:"h,omitempty"`
+	Holds         string `json:"h,omitempty"`
 	Problems      []int  `json:"p,omitempty"`
 	Setter        int    `json:"e,omitempty"`
 	Grade         string `json:"g,omitempty"`
@@ -287,30 +287,30 @@ func (s *KeyValueStore) Update(d *database.Database) {
 			// MoonId:            r.Length,
 		}
 
-		e.Holds = &holds{
-			Start:        make([]string, 0),
-			Intermediate: make([]string, 0),
-			Finish:       make([]string, 0),
-		}
-
+		holdMap := make(map[string]bool)
 		h2 := d.GetHolds(r.Id)
+
+		start := make([]string, 0)
+		finish := make([]string, 0)
+		intermediate := make([]string, 0)
 		for _, v := range h2.Holds {
 			h := string(v[1:])
+			_, ok := holdMap[h]
+			bug.On(ok, fmt.Sprintf("Duplicate hold %s in moonboard problem %s", h, e.Name))
+			holdMap[h] = true
 			if string(v[0]) == "s" {
-				e.Holds.Start = append(e.Holds.Start, h)
+				start = append(start, h)
 			} else if string(v[0]) == "f" {
-				e.Holds.Finish = append(e.Holds.Finish, h)
+				finish = append(finish, h)
 			} else {
-				e.Holds.Intermediate = append(e.Holds.Intermediate, h)
+				intermediate = append(intermediate, h)
 			}
 		}
-		bug.On(len(e.Holds.Start) == 0, "No start hold found")
-		bug.On(len(e.Holds.Finish) == 0, "No finish hold found")
 
-		// Sort the holds so that the checksum is stable.
-		sort.Strings(e.Holds.Start)
-		sort.Strings(e.Holds.Intermediate)
-		sort.Strings(e.Holds.Finish)
+		e.Holds = strings.Join(start, "") + "," + strings.Join(intermediate, "") + "," + strings.Join(finish, "")
+
+		bug.On(len(start) == 0, "No start hold found")
+		bug.On(len(finish) == 0, "No finish hold found")
 
 		if _, ok = md.Problems[e.Url]; ok {
 			e.Url = fmt.Sprintf("%d-%s", e.Id, e.Url)
