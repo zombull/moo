@@ -1,12 +1,12 @@
 host.factory('drive', function ($http, $q, bug, schema) {
     'use strict';
 
-    function __rejected(p, error) {
+    function __chainReject(p, error) {
         p.reject(error);
     }
 
-    function rejected(p) {
-        return __rejected.bind(null, p);
+    function chainReject(p) {
+        return __chainReject.bind(null, p);
     }
 
     var __client = $q.defer();
@@ -25,11 +25,11 @@ host.factory('drive', function ($http, $q, bug, schema) {
                         function() {
                             __client.resolve();
                         },
-                        rejected(__client)
+                        chainReject(__client)
                     );
                 }
             },
-            rejected(__client)
+            chainReject(__client)
         );
     });
 
@@ -56,14 +56,14 @@ host.factory('drive', function ($http, $q, bug, schema) {
                                 function(response) {
                                     i.resolve(response.result.id);
                                 },
-                                rejected(i)
+                                chainReject(i)
                             );
                         }
                     },
-                    rejected(i)
+                    chainReject(i)
                 );
             },
-            rejected(i)
+            chainReject(i)
         );
         return i.promise;
     }
@@ -87,7 +87,7 @@ host.factory('drive', function ($http, $q, bug, schema) {
             function(response) {
                 i.resolve(response.body ? JSON.parse(response.body) : {});
             },
-            rejected(i)
+            chainReject(i)
         );
         return i.promise;
     }
@@ -102,13 +102,13 @@ host.factory('drive', function ($http, $q, bug, schema) {
         getFile(id).then(
             function(file) {
                 patchFile(id, lambda(file)).then(
-                    function(response) {
-                        i.resolve(response);
+                    function() {
+                        i.resolve(file);
                     },
-                    rejected(i)
+                    chainReject(i)
                 );
             },
-            rejected(i)
+            chainReject(i)
         );
         return i.promise;
     }
@@ -123,16 +123,19 @@ host.factory('drive', function ($http, $q, bug, schema) {
                             if (_.isEmpty(file)) {
                                 file = initData();
                                 patchFile(id, file).then(
-                                    function() {},
-                                    rejected(i)
+                                    function() {
+                                        i.resolve({ id: id, data: file });
+                                    },
+                                    chainReject(i)
                                 );
+                            } else {
+                                i.resolve({ id: id, data: file });
                             }
-                            i.resolve({ id: id, data: file });
                         },
-                        rejected(i)
+                        chainReject(i)
                     );
                 },
-                rejected(i)
+                chainReject(i)
             );
             return i.promise;
         },
