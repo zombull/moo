@@ -115,7 +115,7 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
                 targetEvent: event,
                 controller: 'ConfirmController',
                 controllerAs: 'ctrl',
-                locals: { prompt: 'Nuke attempts and sessions?', buttons: { cancel: '2620', confirm: '2694' } },
+                locals: { prompt: 'Nuke attempts and sessions?', buttons: { cancel: '2620', confirm: '2622' } },
                 ariaLabel: 'confirm-dialog',
                 templateUrl: 'common/html/confirm.html',
                 clickOutsideToClose: true,
