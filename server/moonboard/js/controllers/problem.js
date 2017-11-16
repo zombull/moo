@@ -26,7 +26,7 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
 
             var me = data.problems[name];
             var problem = data.index.problems[me];
-            var setter = data.index.setters[problem.e];
+            var setter = data.index.setters[problem.r];
             var grades = data.grades[problem.v / 10];
             var suggested = { setter: [], grade: [] };
             _.each(setter.p, function(p) {

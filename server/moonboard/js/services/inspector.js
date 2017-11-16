@@ -22,7 +22,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                         (!options.grade || options.grade(entry.v)) &&
                         (!options.ascents || options.ascents(entry.a)) &&
                         (!options.stars || options.stars(entry.s)) &&
-                        (!options.setby || options.setby.hasOwnProperty(entry.e)) &&
+                        (!options.setby || options.setby.hasOwnProperty(entry.r)) &&
                         (!options.query || entry.l.indexOf(options.query) !== -1);
             });
             if (!browsing && __results.length > 1) {
@@ -46,8 +46,8 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
     var regExs = {
         benchmark: /\s+(\!|@)b/,
         ticked: /\s+(\!|@)t/,
-        setby: /\s+(\!|@)y\s?(\w+)/,
-        setter: /\s+(@)e/,
+        setby: /\s+(\!|@)r\s?(\w+)/,
+        setter: /\s+(@)u/,
         grade: /\s+(?:=|@)(v1\d|v\d)/,
         minGrade: /\s+>(v1\d|v\d)/,
         maxGrade: /\s+<(v1\d|v\d)/,

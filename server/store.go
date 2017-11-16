@@ -167,7 +167,7 @@ type moonEntry struct {
 	Nickname      string `json:"k,omitempty"`
 	Holds         string `json:"h,omitempty"`
 	Problems      []int  `json:"p,omitempty"`
-	Setter        int    `json:"e,omitempty"`
+	Setter        int    `json:"r,omitempty"`
 	Grade         string `json:"g,omitempty"`
 	Stars         uint   `json:"s,omitempty"`
 	Ascents       uint   `json:"a,omitempty"`

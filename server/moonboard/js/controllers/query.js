@@ -29,7 +29,7 @@ moon.controller('QueryController', function QueryController($scope, $location, $
             }
 
             browse.go($scope, __problems, function(i) {
-                $scope.setter = data.index.setters[$scope.problem.e];
+                $scope.setter = data.index.setters[$scope.problem.r];
                 history.set(historyKey, $scope.i, true);
             });
         }, function() { });
