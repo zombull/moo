@@ -384,17 +384,18 @@ func SyncProblems(d *database.Database, data []byte) {
 
 		holdMap := make(map[string]string)
 		for _, h := range p.Holds {
+			var loc = strings.ToUpper(h.Location)
 			t := "i"
 			if h.IsStart {
 				t = "s"
 			} else if h.IsEnd {
 				t = "f"
 			}
-			if to, ok := holdMap[h.Location]; ok {
-				bug.On(t != to, fmt.Sprintf("Duplicate hold '%s' of different type in problem '%s'", h.Location, name))
+			if to, ok := holdMap[loc]; ok {
+				bug.On(t != to, fmt.Sprintf("Duplicate hold '%s' of different type in problem '%s'", loc, name))
 			} else {
-				holds.Holds = append(holds.Holds, t+h.Location)
-				holdMap[h.Location] = t
+				holds.Holds = append(holds.Holds, t+loc)
+				holdMap[loc] = t
 			}
 		}
 		sort.Strings(holds.Holds)
