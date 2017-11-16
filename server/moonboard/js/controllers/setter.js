@@ -30,8 +30,9 @@ moon.controller('SetterController', function SetterController($scope, $location,
         }
 
         _.each(setter.p, function(i) {
-            if (!showTicks == !data.index.problems[i].t) {
-                __problems.push(data.index.problems[i]);
+            var p = data.index.problems[i];
+            if (!p.e && !showTicks == !p.t) {
+                __problems.push(p);
             }
         });
         if (__problems.length === 0) {

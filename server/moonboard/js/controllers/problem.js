@@ -13,58 +13,61 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
     };
 
     database.all(function(data) {
-        var name = $routeParams.problem;
-        if (!data.problems.hasOwnProperty(name)) {
-            $scope.error = $scope.error || { status: 404, data: 'The problem "' + name + '" does not exist.' };
+        var problemUrl = $routeParams.problem;
+        if (!data.problems.hasOwnProperty(problemUrl)) {
+            $scope.error = $scope.error || { status: 404, data: 'The problem "' + problemUrl + '" does not exist.' };
             return;
         }
 
-        database.project.get(name, $scope, function(project) {
-            shadow.attempts = $scope.attempts = project ? project.a : 0;
-            shadow.sessions = $scope.sessions = project ? project.s : 0;
-            problems.set(data.index.problems);
+        problems.set(data.index.problems);
 
-            var me = data.problems[name];
-            var problem = data.index.problems[me];
-            var setter = data.index.setters[problem.r];
-            var grades = data.grades[problem.v / 10];
-            var suggested = { setter: [], grade: [] };
-            _.each(setter.p, function(p) {
-                if (p != me && suggested.setter.length < 10 && !data.index.problems[p].t) {
-                    suggested.setter.push(data.index.problems[p]);
-                }
-            });
-            _.each(grades, function(p) {
-                if (p != me && (suggested.grade.length + suggested.setter.length) < 20 && !data.index.problems[p].t) {
-                    suggested.grade.push(data.index.problems[p]);
-                }
-            });
-            $scope.setter = setter;
-            $scope.problem = problem;
-            $scope.suggested = suggested;
+        var me = data.problems[problemUrl];
+        var problem = data.index.problems[me];
+        var setter = data.index.setters[problem.r];
+        var grades = data.grades[problem.v / 10];
+        var suggested = { setter: [], grade: [] };
 
-            moonboard.load().then(
-                function() {
-                    moonboard.set(problem.h);
-
-                    if (problem.t && $routeParams.nuke === 'tick') {
-                        $mdDialog.show({
-                            controller: 'ConfirmController',
-                            controllerAs: 'ctrl',
-                            locals: { prompt: 'Nuke tick?', buttons: { cancel: '2620', confirm: '2622' } },
-                            ariaLabel: 'confirm-dialog',
-                            templateUrl: 'common/html/confirm.html',
-                            clickOutsideToClose: true,
-                        }).then(function(source) {
-                            database.tick.rm(problem.u, $scope);
-                        }).catch(function() {});
-                    }
-                },
-                function() {
-                    $scope.error = $scope.error || { status: 500, data: 'Failed to load Moonboard' };
-                }
-            );
+        var showProblem = function(i, maxLength) {
+            var p = data.index.problems[i];
+            return !p.t && !p.e && i != me && (suggested.grade.length + suggested.setter.length) < maxLength;
+        };
+        _.each(setter.p, function(i) {
+            if (showProblem(i, 10)) {
+                suggested.setter.push(data.index.problems[i]);
+            }
         });
+        _.each(grades, function(i) {
+            if (showProblem(i, 20)) {
+                suggested.grade.push(data.index.problems[i]);
+            }
+        });
+        $scope.setter = setter;
+        $scope.problem = problem;
+        $scope.suggested = suggested;
+        $scope.attempts = shadow.attempts = problem.p ? problem.p.a : 0;
+        $scope.sessions = shadow.sessions = problem.p ? problem.p.s : 0;
+
+        moonboard.load().then(
+            function() {
+                moonboard.set(problem.h);
+
+                if (problem.t && $routeParams.nuke === 'tick') {
+                    $mdDialog.show({
+                        controller: 'ConfirmController',
+                        controllerAs: 'ctrl',
+                        locals: { prompt: 'Nuke tick?', buttons: { cancel: '2620', confirm: '2622' } },
+                        ariaLabel: 'confirm-dialog',
+                        templateUrl: 'common/html/confirm.html',
+                        clickOutsideToClose: true,
+                    }).then(function(source) {
+                        database.tick.rm(problem.u, $scope);
+                    }).catch(function() {});
+                }
+            },
+            function() {
+                $scope.error = $scope.error || { status: 500, data: 'Failed to load Moonboard' };
+            }
+        );
     }, $scope);
 
     var updateTimeout = null;
@@ -103,10 +106,35 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
             clickOutsideToClose: true,
         });
     };
-    $scope.tbd = function (event) {
-
+    $scope.exile = function (event) {
+        $mdDialog.show({
+            targetEvent: event,
+            controller: 'ConfirmController',
+            controllerAs: 'ctrl',
+            locals: { prompt: 'Exile problem from the Moon?', buttons: { cancel: '2694', confirm: '2620' } },
+            ariaLabel: 'confirm-dialog',
+            templateUrl: 'common/html/confirm.html',
+            clickOutsideToClose: true,
+        }).then(function(source) {
+            database.exile.add($scope.problem.u, $scope);
+        }).catch(function() {});
     };
     $scope.nuke = function (event) {
+        if ($scope.problem.e) {
+            $mdDialog.show({
+                targetEvent: event,
+                controller: 'ConfirmController',
+                controllerAs: 'ctrl',
+                locals: { prompt: 'Nuke exile status?', buttons: { cancel: '2620', confirm: '2622' } },
+                ariaLabel: 'confirm-dialog',
+                templateUrl: 'common/html/confirm.html',
+                clickOutsideToClose: true,
+            }).then(function(source) {
+                database.exile.rm($scope.problem.u, $scope);
+                bug.On($scope.problem.e);
+            }).catch(function() {});
+            return;
+        }
         if (updateTimeout && $timeout.cancel(updateTimeout)) {
             $scope.attempts = shadow.attempts;
             $scope.sessions = shadow.sessions;
@@ -122,7 +150,8 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
             }).then(function(source) {
                 $scope.attempts = shadow.attempts = 0;
                 $scope.sessions = shadow.sessions = 0;
-                database.project.rm($routeParams.problem, $scope);
+                database.project.rm($scope.problem.u, $scope);
+                bug.On($scope.problem.p);
             }).catch(function() {});
         }
     };

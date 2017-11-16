@@ -7,7 +7,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
     var __results = [];
 
     var filter = function(options, index, browsing) {
-        if (options.benchmark !== null || options.ticked !== null || options.project !== null ||
+        if (options.benchmark !== null || options.ticked !== null || options.project !== null || options.exiled !== null ||
             options.grade || options.ascents || options.stars || options.query || options.setby || options.setter) {
 
             options.query = options.query.replace(/^\s+/, '');
@@ -20,6 +20,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                 return  (options.benchmark === null || entry.hasOwnProperty('b') === options.benchmark) &&
                         (options.ticked === null || (entry.t !== null) === options.ticked) &&
                         (options.project === null || (entry.p !== null) === options.project) &&
+                        (options.exiled === null || entry.e === options.exiled) &&
                         (!options.grade || options.grade(entry.v)) &&
                         (!options.ascents || options.ascents(entry.a)) &&
                         (!options.stars || options.stars(entry.s)) &&
@@ -48,6 +49,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
         benchmark: /\s+(\!|@)b/,
         ticked: /\s+(\!|@)t/,
         project: /\s+(\!|@)p/,
+        exiled: /\s+(\!|@)e/,
         setby: /\s+(\!|@)r\s?(\w+)/,
         setter: /\s+(@)u/,
         grade: /\s+(?:=|@)(v1\d|v\d)/,
@@ -84,6 +86,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                 options.benchmark = truthiness(processRegEx(options, regExs.benchmark));
                 options.ticked = truthiness(processRegEx(options, regExs.ticked));
                 options.project = truthiness(processRegEx(options, regExs.project));
+                options.exiled = truthiness(processRegEx(options, regExs.exiled));
                 options.setby = truthiness(processRegEx(options, regExs.setby));
                 options.setter = truthiness(processRegEx(options, regExs.setter));
 

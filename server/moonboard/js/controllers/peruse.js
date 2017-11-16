@@ -33,7 +33,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
         _.each(m, function(v, k) {
             bug.on(!data.problems.hasOwnProperty(k));
             var problem = data.index.problems[data.problems[k]];
-            if (!grade || problem.g === grade) {
+            if (!problem.e && (!grade || problem.g === grade)) {
                 p.push(problem);
             }
         });
@@ -50,7 +50,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
             });
         } else {
             __problems = data.index.problems.filter(function(problem) {
-                return  (!grade || problem.g === grade) && (!showTicks == !problem.t);
+                return !problem.e && (!grade || problem.g === grade) && !problem.t;
             });
         }
 

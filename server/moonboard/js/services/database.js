@@ -50,12 +50,18 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
                 problem.t = data.ticks[problem.u];
                 problem.g = problem.t.g;
                 problem.s = problem.t.s ? problem.t.s : problem.s;
+
+                // User data only modifies the specified index, i.e.
+                // this is safe even though we're still unpacking.
                 if (bug.warn(data.projects.hasOwnProperty(problem.u), "Project exists for tick, queueing removal")) {
-                    // User data only modifies the specified index, i.e.
-                    // this is safe even though we're still unpacking.
                     userdata.rm('projects', data, problem.u).sync();
                 }
+                if (bug.warn(data.exiles.hasOwnProperty(problem.u), "Exile exists for tick, queueing removal")) {
+                    userdata.rm('exiles', data, problem.u).sync();
+                }
             }
+            problem.p = data.projects.hasOwnProperty(problem.u) ? data.projects[problem.u] : null;
+            problem.e = data.exiles.hasOwnProperty(problem.u);
             problem.v = grades.convert(problem.g);
 
             bug.on((problem.v/10) > 17, "Really, a V18?  Hello, Nalle!");
@@ -111,6 +117,19 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
         );
     };
 
+    function assertUserData(data, problemUrl, exist, notExist) {
+        _.each(exist, function(index) {
+            bug.on(!data[index].hasOwnProperty(problemUrl));
+        });
+        _.each(notExist, function(index) {
+            bug.on(data[index].hasOwnProperty(problemUrl));
+        });
+    }
+
+    function getProblem(data, problemUrl) {
+        return data.index.problems[data.problems[problemUrl]];
+    }
+
     return {
         all: function(callback, scope) {
             getData(scope, callback);
@@ -131,22 +150,17 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
             });
         },
         project: {
-            get: function(problemUrl, scope, callback) {
-                getData(scope, function(data) {
-                    if (data.projects.hasOwnProperty(problemUrl)) {
-                        callback(data.projects[problemUrl]);
-                    } else {
-                        callback(null);
-                    }
-                });
-            },
             add: function(problemUrl, project, scope) {
                 getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems'], ['exiles', 'ticks']);
+                    getProblem(data, problemUrl).p = project;
                     userdata.add('projects', data, problemUrl, project).sync();
                 });
             },
             rm: function(problemUrl, scope) {
                 getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems'], []);
+                    getProblem(data, problemUrl).p = null;
                     userdata.rm('projects', data, problemUrl).sync();
                 });
             }
@@ -154,11 +168,9 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
         tick: {
             add: function(problemUrl, tick, scope, callback) {
                 getData(scope, function(data) {
-                    bug.on(!data.problems.hasOwnProperty(problemUrl));
-                    var problem = data.index.problems[data.problems[problemUrl]];
-                    bug.on(problem.t !== null);
-                    bug.on(data.ticks.hasOwnProperty(problemUrl));
+                    assertUserData(data, problemUrl, ['problems'], ['exiles', 'ticks']);
 
+                    var problem = getProblem(data, problemUrl);
                     problem.t = tick;
                     problem.g = tick.g;
                     problem.s = tick.s;
@@ -171,10 +183,25 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
             },
             rm: function(problemUrl, scope) {
                 getData(scope, function(data) {
-                    bug.on(!data.problems.hasOwnProperty(problemUrl));
-                    bug.on(!data.ticks.hasOwnProperty(problemUrl));
-                    data.index.problems[data.problems[problemUrl]].t = null;
+                    assertUserData(data, problemUrl, ['problems', 'ticks'], []);
+                    getProblem(data, problemUrl).t = null;
                     userdata.rm('ticks', data, problemUrl).sync();
+                });
+            }
+        },
+        exile: {
+            add: function(problemUrl, scope) {
+                getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems'], ['exiles', 'ticks']);
+                    getProblem(data, problemUrl).e = true;
+                    userdata.add('exiles', data, problemUrl, true).sync();
+                });
+            },
+            rm: function(problemUrl, scope) {
+                getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems', 'exiles'], ['ticks']);
+                    getProblem(data, problemUrl).e = false;
+                    userdata.rm('exiles', data, problemUrl).sync();
                 });
             }
         }

@@ -5,14 +5,16 @@ moon.factory('userdata', function ($q, bug, storage, drive) {
     'use strict';
 
     var USER_DATA = 'zombull.moonboard.2016.userdata.json';
+    var USER_DATA_KEYS = ['projects', 'ticks', 'exiles'];
 
     var __drive = $q.defer();
 
     function initData() {
-        return {
-            projects: JSON.parse(localStorage.getItem('projects')) || {},
-            ticks: JSON.parse(localStorage.getItem('ticks')) || {},
-        };
+        var data = {};
+        _.each(USER_DATA_KEYS, function(key) {
+            data[key] = JSON.parse(localStorage.getItem(key)) || {};
+        });
+        return data;
     }
 
     var ls = {
@@ -84,20 +86,19 @@ moon.factory('userdata', function ($q, bug, storage, drive) {
         function(file) {
             syncPending(file.id, file.data).then(
                 function(data) {
-                    storage.set('projects', data.projects || {});
-                    storage.set('ticks', data.ticks || {});
+                    _.each(USER_DATA_KEYS, function(key) {
+                        storage.set(key, data[key] || {});
+                    });
                     __drive.resolve(file.id);
                 },
                 function(error) {
                     __drive.reject();
-                    console.log(error);
                     alert("Unabled to sync user data to Google Drive");
                 }
             );
         },
         function(error) {
             __drive.reject();
-            console.log(error);
             alert("Unabled to retrieve user data from Google Drive");
         }
     );
@@ -107,8 +108,6 @@ moon.factory('userdata', function ($q, bug, storage, drive) {
             return __drive.promise;
         },
         add: function(index, data, key, val) {
-            bug.on(!data.problems.hasOwnProperty(key));
-
             data[index][key] = val;
             storage.set(index, data[index]);
             pending.add(index, key, val);
