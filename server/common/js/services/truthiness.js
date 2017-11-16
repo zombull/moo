@@ -1,16 +1,13 @@
 host.factory('truthiness', function () {
     'use strict';
 
-    return function(val) {
-        if (val === null) {
-            return val;
-        }
-        if (val.length === 1) {
-            return val === '!' ? false : true;
+    return function(b, v) {
+        if (!v) {
+            return b === '!' ? false : true;
         }
         return {
-            b: val.substring(0, 1) !== '!',
-            v: val.substring(1).trim()
+            b: b !== '!',
+            v: v.trim()
         };
     };
 });

@@ -1,4 +1,4 @@
-moon.factory('inspector', function ($location, $q, database, problems, calculator, grades, truthiness) {
+moon.factory('inspector', function ($location, $q, bug, database, problems, calculator, grades, truthiness) {
     'use strict';
 
     // Keep track of the last results, this is used when browsing
@@ -72,7 +72,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
             if (fn) {
                 return fn(match[1], match[2]);
             }
-            return match[1].toLowerCase() + (match[2] ? match[2].toLowerCase() : '');
+            return match[1].toLowerCase();
         }
         return null;
     }
@@ -91,12 +91,12 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                 var min, max;
                 var options = { raw: query.toLowerCase(), query: ' ' + query.toLowerCase() };
 
-                options.benchmark = truthiness(processRegEx(options, regExs.benchmark));
-                options.ticked = truthiness(processRegEx(options, regExs.ticked));
-                options.project = truthiness(processRegEx(options, regExs.project));
-                options.exiled = truthiness(processRegEx(options, regExs.exiled));
-                options.setby = truthiness(processRegEx(options, regExs.setby));
-                options.setter = truthiness(processRegEx(options, regExs.setter));
+                options.benchmark = processRegEx(options, regExs.benchmark, truthiness);
+                options.ticked = processRegEx(options, regExs.ticked, truthiness);
+                options.project = processRegEx(options, regExs.project, truthiness);
+                options.exiled = processRegEx(options, regExs.exiled, truthiness);
+                options.setby = processRegEx(options, regExs.setby, truthiness);
+                options.setter = processRegEx(options, regExs.setter, truthiness);
 
                 options.holds = processRegEx(options, regExs.holds, function(b, q) {
                     b = truthiness(b);
