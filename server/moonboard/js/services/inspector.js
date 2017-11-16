@@ -8,7 +8,7 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
 
     var filter = function(options, index, browsing) {
         if (options.benchmark !== null || options.ticked !== null || options.project !== null || options.exiled !== null ||
-            options.grade || options.ascents || options.stars || options.query || options.setby || options.setter || options.holds) {
+            options.grade || options.ascents || options.stars || options.query || options.setby || options.setter || options.holds || options.noholds) {
 
             options.query = options.query.replace(/^\s+/, '');
             __results = index.filter(function(entry) {
@@ -26,7 +26,8 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
                         (!options.stars || options.stars(entry.s)) &&
                         (!options.setby || options.setby.hasOwnProperty(entry.r)) &&
                         (!options.query || entry.l.indexOf(options.query) !== -1) &&
-                        (!options.holds || options.holds(entry.h));
+                        (!options.holds || options.holds(entry.h)) &&
+                        (!options.noholds || options.noholds(entry.h));
             });
             if (!browsing && __results.length > 1) {
                 __results.unshift({ n: '*** Browse Results ***', u: 'q/' + encodeURI(options.raw) });
@@ -54,7 +55,8 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
         setby: /\s+(\!|@)r\s?(\w+)/,
         setter: /\s+(@)u/,
         grade: /\s+(?:=|@)(v1\d|v\d)/,
-        holds: /\s+(\!|@)h((?:[a-kA-K][0-9][0-9]?)(?:,[a-kA-K][0-9][0-9]?)*)/,
+        holds: /\s+(?:h=|@h)((?:[a-kA-K][0-9][0-9]?)(?:,[a-kA-K][0-9][0-9]?)*)/,
+        noholds: /\s+(?:h!=|!h)((?:[a-kA-K][0-9][0-9]?)(?:,[a-kA-K][0-9][0-9]?)*)/,
         minGrade: /\s+>(v1\d|v\d)/,
         maxGrade: /\s+<(v1\d|v\d)/,
         ascents: /\s+(?:a=|@a)(\d+)/,
@@ -75,6 +77,18 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
             return match[1].toLowerCase();
         }
         return null;
+    }
+
+    function filterHolds(b, q) {
+        q = q.toUpperCase().split(',');
+        return function(holds) {
+            for (var i = 0; i < q.length; i++) {
+                if ((holds.indexOf(q[i]) !== -1) !== b) {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 
     return {
@@ -98,18 +112,8 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
                 options.setby = processRegEx(options, regExs.setby, truthiness);
                 options.setter = processRegEx(options, regExs.setter, truthiness);
 
-                options.holds = processRegEx(options, regExs.holds, function(b, q) {
-                    b = truthiness(b);
-                    q = q.toUpperCase().split(',');
-                    return function(holds) {
-                        for (var i = 0; i < q.length; i++) {
-                            if ((holds.indexOf(q[i]) !== -1) !== b) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    };
-                });
+                options.holds = processRegEx(options, regExs.holds, filterHolds.bind(null, true));
+                options.noholds = processRegEx(options, regExs.noholds, filterHolds.bind(null, false));
 
                 min = max = processRegEx(options, regExs.grade);
                 if (!min) {
