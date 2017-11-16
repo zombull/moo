@@ -75,6 +75,9 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
     return {
         search: function (query, browsing) {
             if (browsing) {
+                if (__results.length > 0 && !__results[0].hasOwnProperty('l')) {
+                    __results.shift();
+                }
                 problems.set(__results);
             }
 
