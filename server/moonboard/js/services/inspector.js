@@ -8,7 +8,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
 
     var filter = function(options, index, browsing) {
         if (options.benchmark !== null || options.ticked !== null || options.project !== null || options.exiled !== null ||
-            options.grade || options.ascents || options.stars || options.query || options.setby || options.setter) {
+            options.grade || options.ascents || options.stars || options.query || options.setby || options.setter || options.holds) {
 
             options.query = options.query.replace(/^\s+/, '');
             __results = index.filter(function(entry) {
@@ -25,7 +25,8 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                         (!options.ascents || options.ascents(entry.a)) &&
                         (!options.stars || options.stars(entry.s)) &&
                         (!options.setby || options.setby.hasOwnProperty(entry.r)) &&
-                        (!options.query || entry.l.indexOf(options.query) !== -1);
+                        (!options.query || entry.l.indexOf(options.query) !== -1) &&
+                        (!options.holds || options.holds(entry.h));
             });
             if (!browsing && __results.length > 1) {
                 __results.unshift({ n: '*** Browse Results ***', u: 'q/' + encodeURI(options.raw) });
@@ -53,6 +54,7 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
         setby: /\s+(\!|@)r\s?(\w+)/,
         setter: /\s+(@)u/,
         grade: /\s+(?:=|@)(v1\d|v\d)/,
+        holds: /\s+(\!|@)h((?:[a-kA-K][0-9][0-9]?)(?:,[a-kA-K][0-9][0-9]?)*)/,
         minGrade: /\s+>(v1\d|v\d)/,
         maxGrade: /\s+<(v1\d|v\d)/,
         ascents: /\s+(?:a=|@a)(\d+)/,
@@ -63,10 +65,13 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
         maxStars: /\s+s<(\d+)/,
     };
 
-    function processRegEx(options, regEx) {
+    function processRegEx(options, regEx, fn) {
         var match = options.query.match(regEx);
         if (match) {
             options.query = options.query.replace(regEx, '');
+            if (fn) {
+                return fn(match[1], match[2]);
+            }
             return match[1].toLowerCase() + (match[2] ? match[2].toLowerCase() : '');
         }
         return null;
@@ -92,6 +97,19 @@ moon.factory('inspector', function ($location, $q, database, problems, calculato
                 options.exiled = truthiness(processRegEx(options, regExs.exiled));
                 options.setby = truthiness(processRegEx(options, regExs.setby));
                 options.setter = truthiness(processRegEx(options, regExs.setter));
+
+                options.holds = processRegEx(options, regExs.holds, function(b, q) {
+                    b = truthiness(b);
+                    q = q.toUpperCase().split(',');
+                    return function(holds) {
+                        for (var i = 0; i < q.length; i++) {
+                            if ((holds.indexOf(q[i]) !== -1) !== b) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    };
+                });
 
                 min = max = processRegEx(options, regExs.grade);
                 if (!min) {
