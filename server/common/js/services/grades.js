@@ -107,7 +107,7 @@ host.factory('grades', function () {
                 min = max = undefined;
             }
     
-            if (min && max) {
+            if (min !== undefined && max !== undefined) {
                 return function(grade) {
                     return grade >= min && grade <= max;
                 };
