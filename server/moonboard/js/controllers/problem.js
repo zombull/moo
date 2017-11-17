@@ -12,6 +12,19 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
         sessions: 0,
     };
 
+    function dialog(event, ctrl, locals, fn) {
+        return $mdDialog.show({
+            targetEvent: event,
+            controller: ctrl + 'Controller',
+            controllerAs: 'ctrl',
+            locals: locals,
+            ariaLabel: ctrl.toLowerCase() + '-dialog',
+            templateUrl: '{0}/html/{1}.html'.format(ctrl == 'Confirm' ? 'common' : 'static', ctrl.toLowerCase()),
+            clickOutsideToClose: true,
+        }).then(function(source) { if (fn) { fn(); }
+        }).catch(function() { });
+    }
+
     database.all(function(data) {
         var problemUrl = $routeParams.problem;
         if (!data.problems.hasOwnProperty(problemUrl)) {
@@ -52,16 +65,9 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
                 moonboard.set(problem.h);
 
                 if (problem.t && $routeParams.nuke === 'tick') {
-                    $mdDialog.show({
-                        controller: 'ConfirmController',
-                        controllerAs: 'ctrl',
-                        locals: { prompt: 'Nuke tick?', buttons: { cancel: '2620', confirm: '2622' } },
-                        ariaLabel: 'confirm-dialog',
-                        templateUrl: 'common/html/confirm.html',
-                        clickOutsideToClose: true,
-                    }).then(function(source) {
+                    dialog(undefined, 'Confirm', { prompt: 'Nuke tick?', buttons: { cancel: '2620', confirm: '2622' } }, function() {
                         database.tick.rm(problem.u, $scope);
-                    }).catch(function() {});
+                    });
                 }
             },
             function() {
@@ -96,63 +102,31 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
     };
     $scope.tick = function (event) {
         $timeout.cancel(updateTimeout);
-        $mdDialog.show({
-            targetEvent: event,
-            controller: 'TickController',
-            controllerAs: 'ctrl',
-            locals: { problem: $scope.problem, attempts: $scope.attempts || 1, sessions: $scope.sessions || 1 },
-            ariaLabel: 'tick-dialog',
-            templateUrl: 'static/html/tick.html',
-            clickOutsideToClose: true,
-        });
+        dialog(event, 'Tick', { problem: $scope.problem, attempts: $scope.attempts || 1, sessions: $scope.sessions || 1 });
     };
     $scope.exile = function (event) {
-        $mdDialog.show({
-            targetEvent: event,
-            controller: 'ConfirmController',
-            controllerAs: 'ctrl',
-            locals: { prompt: 'Exile problem from the Moon?', buttons: { cancel: '2694', confirm: '2620' } },
-            ariaLabel: 'confirm-dialog',
-            templateUrl: 'common/html/confirm.html',
-            clickOutsideToClose: true,
-        }).then(function(source) {
+        dialog(event, 'Confirm', { prompt: 'Exile to the dark side of the moon?', buttons: { cancel: '2694', confirm: '2620' } }, function() {
             database.exile.add($scope.problem.u, $scope);
-        }).catch(function() {});
+        });
     };
     $scope.nuke = function (event) {
         if ($scope.problem.e) {
-            $mdDialog.show({
-                targetEvent: event,
-                controller: 'ConfirmController',
-                controllerAs: 'ctrl',
-                locals: { prompt: 'Nuke exile status?', buttons: { cancel: '2620', confirm: '2622' } },
-                ariaLabel: 'confirm-dialog',
-                templateUrl: 'common/html/confirm.html',
-                clickOutsideToClose: true,
-            }).then(function(source) {
+            dialog(event, 'Confirm', { prompt: 'Nuke exile status?', buttons: { cancel: '2620', confirm: '2622' } }, function() {
                 database.exile.rm($scope.problem.u, $scope);
                 bug.On($scope.problem.e);
-            }).catch(function() {});
+            });
             return;
         }
         if (updateTimeout && $timeout.cancel(updateTimeout)) {
             $scope.attempts = shadow.attempts;
             $scope.sessions = shadow.sessions;
         } else {
-            $mdDialog.show({
-                targetEvent: event,
-                controller: 'ConfirmController',
-                controllerAs: 'ctrl',
-                locals: { prompt: 'Nuke attempts and sessions?', buttons: { cancel: '2620', confirm: '2622' } },
-                ariaLabel: 'confirm-dialog',
-                templateUrl: 'common/html/confirm.html',
-                clickOutsideToClose: true,
-            }).then(function(source) {
+            dialog(event, 'Confirm', { prompt: 'Nuke attempts and sessions?', buttons: { cancel: '2620', confirm: '2622' } }, function() {
                 $scope.attempts = shadow.attempts = 0;
                 $scope.sessions = shadow.sessions = 0;
                 database.project.rm($scope.problem.u, $scope);
                 bug.On($scope.problem.p);
-            }).catch(function() {});
+            });
         }
     };
 });
