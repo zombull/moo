@@ -48,6 +48,11 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
             problem.t = null;
             if (data.ticks.hasOwnProperty(problem.u)) {
                 problem.t = data.ticks[problem.u];
+                if (problem.t.g != problem.g) {
+                    // Save the original grade if it is different than the ticked grade.
+                    problem.o = problem.g;
+                    problem.w = grades.convert(problem.g);
+                }
                 problem.g = problem.t.g;
                 problem.s = problem.t.s ? problem.t.s : problem.s;
 

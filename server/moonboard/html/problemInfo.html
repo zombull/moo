@@ -14,6 +14,7 @@
             <tr ng-if="$ctrl.problem.t"><td valign="top">Ticked</td><td>{{$ctrl.problem.t.d | date:'LLLL dd, yyyy'}}</td></tr>
             <tr ng-if="$ctrl.problem.t"><td valign="top">Attempts</td><td>{{$ctrl.problem.t.a}}</td></tr>
             <tr ng-if="$ctrl.problem.t && $ctrl.problem.t.e"><td valign="top">Sessions</td><td>{{$ctrl.problem.t.e}}</td></tr>
+            <tr ng-if="$ctrl.problem.o"><td valign="top">Original</td><td>{{$ctrl.problem.o}}</td></tr>
         </tbody>
     </table>
 </md-subheader>
