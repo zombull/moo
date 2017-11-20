@@ -26,7 +26,6 @@ type KeyValueStore struct {
 	cache  string
 	data   map[string][]byte
 	sums   map[string][]byte
-	// client *redis.Client
 }
 
 func NewStore(server, cache string) *KeyValueStore {
@@ -54,15 +53,6 @@ func NewStore(server, cache string) *KeyValueStore {
 		}
 	}
 
-	// s.client = redis.NewClient(&redis.Options{
-	// 	Addr:     "127.0.0.1:6379",
-	// 	Password: "", // no password set
-	// 	DB:       0,  // use default DB
-	// })
-
-	// _, err := s.client.Ping().Result()
-	// bug.OnError(err)
-
 	return &s
 }
 
@@ -76,14 +66,6 @@ func (s *KeyValueStore) get(c echo.Context, key, notFound string) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, internalServerError)
 	}
 	return c.JSONBlob(http.StatusOK, val)
-
-	// val, err := s.client.Get(key).Result()
-	// if err == redis.Nil && len(notFound) > 0 {
-	// 	return echo.NewHTTPError(http.StatusNotFound, notFound)
-	// } else if err != nil {
-	// 	return echo.NewHTTPError(http.StatusInternalServerError, internalServerError)
-	// }
-	// return c.JSONBlob(http.StatusOK, []byte(val))
 }
 
 func (s *KeyValueStore) getInternal(key string) func(c echo.Context) error {
@@ -98,29 +80,6 @@ func (s *KeyValueStore) getValue(host string) func(c echo.Context) error {
 		return s.get(c, host+"."+key, fmt.Sprintf("Did not find any %s for '%s'", key, host))
 	}
 }
-
-// func (s *KeyValueStore) getCrag(c echo.Context) error {
-// 	crag := c.Param("crag")
-// 	return s.get(c, "crag:"+crag, fmt.Sprintf("The crag '%s' was not found.", crag))
-// }
-
-// func (s *KeyValueStore) getArea(c echo.Context) error {
-// 	crag := c.Param("crag")
-// 	area := c.Param("area")
-// 	return s.get(c, "area:"+crag+":a:"+area, fmt.Sprintf("The area '%s' was not found in %s.", area, crag))
-// }
-
-// func (s *KeyValueStore) getRoute(c echo.Context) error {
-// 	crag := c.Param("crag")
-// 	route := c.Param("route")
-// 	return s.get(c, "route:"+crag+":"+route, fmt.Sprintf("The route '%s' was not found in %s.", route, crag))
-// }
-
-// func (s *KeyValueStore) getProblem(c echo.Context) error {
-// 	set := c.Param("set")
-// 	problem := c.Param("problem")
-// 	return s.get(c, "problem:"+set+":"+problem, fmt.Sprintf("The problem '%s' was not found in Moonboard set %s.", problem, set))
-// }
 
 func sanitize(s string) string {
 	return strings.ToLower(strings.Map(func(r rune) rune {
@@ -359,15 +318,4 @@ func (s *KeyValueStore) Update(d *database.Database) {
 	s.export("moonboard.problems", s.cache, md.Problems)
 	s.export("moonboard.setters", s.cache, md.Setters)
 	s.export("moonboard.ticks", s.cache, md.Ticks)
-}
-
-type betaEntry struct {
-	Name          string `json:"n"`
-	LowerCaseName string `json:"l"`
-	Url           string `json:"u"`
-	Grade         string `json:"g,omitempty"`
-	Pitches       uint   `json:"p,omitempty"`
-	Stars         uint   `json:"s,omitempty"`
-	Types         string `json:"t,omitempty"` // bstar = Boulder+Sport+Trade+Aid+topRope
-	Difficulty    uint   `json:"d,omitempty"`
 }
