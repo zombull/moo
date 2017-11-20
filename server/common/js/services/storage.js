@@ -79,7 +79,7 @@ host.factory('storage', function ($q, bug, schema) {
                     if (local) {
                         request.resolve(local);
                     } else if (schema.metadata[key].drive) {
-                        request.resolve({});
+                        request.resolve('{}');
                     } else {
                         request.reject();
                     }
