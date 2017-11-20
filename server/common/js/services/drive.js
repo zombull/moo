@@ -1,4 +1,4 @@
-host.factory('drive', function ($http, $q, bug, schema) {
+host.factory('drive', function ($q, $http, $filter, bug, schema) {
     'use strict';
 
     function __chainReject(p, error) {
@@ -20,7 +20,8 @@ host.factory('drive', function ($http, $q, bug, schema) {
             function() {
                 if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
                     __client.resolve();
-                } else {
+                } else if (localStorage.getItem('drive') != $filter('date')(new Date(), 'yyyy-MM-dd')) {
+                    localStorage.setItem('drive', $filter('date')(new Date(), 'yyyy-MM-dd'));
                     gapi.auth2.getAuthInstance().signIn().then(
                         function() {
                             __client.resolve();
