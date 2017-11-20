@@ -12,6 +12,7 @@ var del = require('del'),
     ngAnnotate = require('gulp-ng-annotate'),
     minifyCss = require('gulp-minify-css'),
     minifyHTML = require('gulp-minify-html'),
+    minifyInline = require('gulp-minify-inline'),
     nodemon = require('gulp-nodemon'),
     livereload = require('gulp-livereload');
 
@@ -20,6 +21,7 @@ var source = {
     css: ['common/css/**/*.css', 'moonboard/css/**/*.css'],
     html: ['common/html/**/*.html', 'moonboard/html/**/*.html'],
     index: 'moonboard/index.html',
+    substorage: 'moonboard/substorage.html',
     images: ['common/img/**/*', 'moonboard/img/**/*'],
     fonts: ['common/css/ocr/*.*', '!common/css/ocr/*.css',
             'common/css/universalia/*.*', '!common/css/universalia/*.css',
@@ -93,9 +95,10 @@ gulp.task('server', /*['checksums'],*/ function() {
     gulp.src(source.images)
         .pipe(gulp.dest(server + '/img'));
 
-    gulp.src('moonboard/substorage.html')
+    gulp.src(source.substorage)
         .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
-        .pipe(minifyHTML())                                     // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
+        .pipe(minifyHTML({empty: true}))                        // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
+        .pipe(minifyInline())
         .pipe(gulp.dest(server));
 
     return gulp.src(source.index)
