@@ -1,8 +1,8 @@
-<md-content layout="row" layout-sm="column" layout-align="center" flex class="md-default-theme" ng-cloak>
+<md-content layout="row" layout-xs="column" layout-align="center" flex class="md-default-theme" ng-cloak>
     <div flex ng-if="!error" style="padding-top:20px;">
         <canvas id="problemCanvas" width="427" height="657"></canvas>
     </div>
-    <span flex ng-if="!error" hide-sm></span>
+    <span flex ng-if="!error" hide-xs></span>
     <div flex ng-if="problem && !error" style="padding-top:15px;min-width:360px;">
         <md-content ng-if="!problem.t" layout="row" layout-align="center" ng-cloak>
             <md-button class="md-raised md-accent" ng-disabled="problem.e" ng-click="attempt($event)">{{attempts}}</md-button>
