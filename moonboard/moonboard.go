@@ -298,12 +298,6 @@ func country(s string) string {
 	return sanitize(s)
 }
 
-var forcedNicknames = map[string]string{
-	"Jon Guinther":   "goonthorj",
-	"Mark Tomlinson": "threenine",
-	"Juha Isotupa":   "JuIs2000",
-}
-
 func SyncProblems(d *database.Database, data []byte) {
 	cragId := Id(d)
 	setId := SetId(d)
@@ -313,17 +307,24 @@ func SyncProblems(d *database.Database, data []byte) {
 	bug.OnError(err)
 
 	for _, p := range problems.Problems {
+		if p.ApiId == 0 {
+			p.ApiId = p.Id
+			bug.On(p.ApiId == 0, fmt.Sprintf("Moonboard problem '%s' ApiId and ID are both zero :(", p.Name))
+		}
 		name := sanitize(p.Name)
-		route := d.FindRoute(setId, name)
-		if route != nil {
+		orig := d.FindRoute(setId, name)
+		if orig != nil {
 			// Moonboard apparently has an insertion bug of some form and
 			// allows for back-to-back insertions with the same name.
-			if route.Length != p.ApiId {
+			if orig.Length != p.ApiId {
 				fmt.Printf("WARN: duplicate route found: %s\n", name)
-			} else {
-				// Updates not yet implemented
+				continue
 			}
-			continue
+		} else {
+			orig = d.FindRouteByLength(setId, p.ApiId)
+			if orig != nil {
+				bug.Bug(fmt.Sprintf("Moonboard problem '%s' with  ID '%d' exists as '%s'", name, p.ApiId, orig.Name))
+			}
 		}
 
 		sname := fmt.Sprintf("%s %s", sanitize(p.Setter.Firstname), sanitize(p.Setter.Lastname))
@@ -336,18 +337,16 @@ func SyncProblems(d *database.Database, data []byte) {
 				City:     sanitize(p.Setter.City),
 				Inactive: false,
 			}
-			if fname, ok := forcedNicknames[sname]; ok {
-				setter.Nickname = fname
-			} else if sname != sanitize(p.Setter.Nickname) {
+			if sname != sanitize(p.Setter.Nickname) {
 				setter.Nickname = p.Setter.Nickname
 			}
 			d.Insert(setter)
-		}
-		if _, ok := forcedNicknames[sname]; !ok && sname != sanitize(p.Setter.Nickname) {
-			bug.On(setter.Nickname != p.Setter.Nickname, fmt.Sprintf("Duplicate setter? %v vs. %v", setter, p.Setter))
+		} else if setter.Nickname != p.Setter.Nickname && len(setter.Nickname) == 0 {
+			setter.Nickname = p.Setter.Nickname
+			d.Update(setter)
 		}
 
-		route = &database.Route{
+		route := &database.Route{
 			CragId:    cragId,
 			AreaId:    setId,
 			Name:      name,
@@ -362,17 +361,23 @@ func SyncProblems(d *database.Database, data []byte) {
 		if len(p.Url) == 0 {
 			b, err := json.Marshal(p)
 			bug.OnError(err)
-			p.Url = fmt.Sprintf("%x", md5.Sum(b))
+			route.Url = fmt.Sprintf("https://www.moonboard.com/Problems/View/%d/%x", p.ApiId, md5.Sum(b))
+		} else {
+			route.Url = fmt.Sprintf("https://www.moonboard.com/Problems/View/%d/%s", p.ApiId, p.Url)
+			if orig != nil {
+				bug.On(orig.Url != route.Url, fmt.Sprintf("Existing Moonboard problem '%s' url diverges: '%s' -> '%s'", route.Name, orig.Url, route.Url))
+			}
 		}
-		route.Url = fmt.Sprintf("https://www.moonboard.com/Problems/View/%d/%s", p.ApiId, p.Url)
 
 		var ok bool
 		if len(p.UserGrade) > 0 {
 			route.Grade, ok = database.FontainebleauToHueco[strings.ToUpper(p.UserGrade)]
 		} else {
 			route.Grade, ok = database.FontainebleauToHueco[strings.ToUpper(p.Grade)]
+			if orig != nil {
+				bug.On(orig.Grade != route.Grade, fmt.Sprintf("Existing Moonboard problem '%s' grade diverges", route.Name))
+			}
 		}
-
 		bug.On(!ok, fmt.Sprintf("Unhandled case in 'Grade rating': %v", p.UserGrade))
 
 		route.Date, err = time.Parse("02 Jan 2006 15:04", p.Date)
@@ -398,9 +403,26 @@ func SyncProblems(d *database.Database, data []byte) {
 				holdMap[loc] = t
 			}
 		}
+		if len(holds.Holds) > 24 {
+			fmt.Printf("WARN: skipping '%s' as it has %d holds\n", name, len(holds.Holds))
+			continue
+		}
 		sort.Strings(holds.Holds)
 
-		d.InsertDoubleLP(route, holds)
+		if orig != nil {
+			h2 := d.GetHolds(orig.Id)
+			for i := range h2.Holds {
+				bug.On(h2.Holds[i] != holds.Holds[i], fmt.Sprintf("Existing Moonboard problem '%s' holds diverge", route.Name))
+			}
+			bug.On(orig.SetterId != route.SetterId, fmt.Sprintf("Existing Moonboard problem '%s' setter ID diverges", route.Name))
+			bug.On(orig.Date != route.Date, fmt.Sprintf("Existing Moonboard problem '%s' date diverges", route.Name))
+			bug.On(orig.Length != route.Length, fmt.Sprintf("Existing Moonboard problem '%s' ID diverges", route.Name))
+
+			route.Id = orig.Id
+			d.Update(route)
+		} else {
+			d.InsertDoubleLP(route, holds)
+		}
 	}
 }
 
