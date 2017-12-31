@@ -152,3 +152,13 @@ func (d *Database) FindRoute(areaId int64, name string) *Route {
 	}
 	return routes[0]
 }
+
+func (d *Database) FindRouteByLength(areaId int64, length uint) *Route {
+	q := `SELECT * FROM routes WHERE area_id=? AND length=?`
+	r := d.query(q, []interface{}{areaId, length})
+	routes := d.scanRoutes(r)
+	if len(routes) == 0 {
+		return nil
+	}
+	return routes[0]
+}
