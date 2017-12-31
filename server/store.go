@@ -216,14 +216,7 @@ func (s *KeyValueStore) Update(d *database.Database) {
 		// e.g. higher stars and ascents at the front of the list.  And
 		// don't forget that Pitches is actualy Ascents, we're sorting
 		// routes from the database, not the Moonboard specific problems.
-		if p1.Pitches < 50 && p2.Pitches > 200 || p1.Pitches < 50 && p2.Pitches > 100 && p2.Stars > 1 {
-			return false
-		} else if p1.Pitches > 200 && p2.Pitches < 50 || p1.Pitches > 100 && p2.Pitches < 50 && p1.Stars > 1 {
-			return true
-		} else if p1.Stars == p2.Stars {
-			return p1.Pitches > p2.Pitches
-		}
-		return p1.Stars > p2.Stars
+		return (p1.Stars * p1.Stars * p1.Pitches) > (p2.Stars * p2.Stars * p2.Pitches)
 	})
 
 	for i, r := range routes {
@@ -268,8 +261,8 @@ func (s *KeyValueStore) Update(d *database.Database) {
 
 		e.Holds = strings.Join(start, "") + "," + strings.Join(intermediate, "") + "," + strings.Join(finish, "")
 
-		bug.On(len(start) == 0, "No start hold found")
-		bug.On(len(finish) == 0, "No finish hold found")
+		bug.On(len(start) == 0, fmt.Sprintf("%s: No start hold found", r.Name))
+		bug.On(len(finish) == 0, fmt.Sprintf("%s: No finish hold found", r.Name))
 
 		if _, ok = md.Problems[e.Url]; ok {
 			e.Url = fmt.Sprintf("%d-%s", e.Id, e.Url)
