@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -52,6 +53,7 @@ func moon(opts *moonOpts) {
 				if strings.HasPrefix(fi.Name(), prefix) && strings.HasSuffix(fi.Name(), ".json") {
 					data, err := ioutil.ReadFile(name)
 					bug.OnError(err)
+					fmt.Printf("Syncing: %s\n", fi.Name())
 					f(data)
 				}
 			}
