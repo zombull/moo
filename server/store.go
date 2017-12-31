@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/labstack/echo"
@@ -118,20 +119,22 @@ type holds struct {
 // need to be identical for common fields and distinct for unique
 // fields.
 type moonEntry struct {
-	Url           string `json:"u"`
-	Name          string `json:"n"`
-	LowerCaseName string `json:"l"`
-	Id            int    `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
-	Date          string `json:"d,omitempty"`
-	Nickname      string `json:"k,omitempty"`
-	Holds         string `json:"h,omitempty"`
-	Problems      []int  `json:"p,omitempty"`
-	Setter        int    `json:"r,omitempty"`
-	Grade         string `json:"g,omitempty"`
-	Stars         uint   `json:"s,omitempty"`
-	Ascents       uint   `json:"a,omitempty"`
-	Benchmark     bool   `json:"b,omitempty"`
-	Comment       string `json:"c,omitempty"`
+	Url           string    `json:"u"`
+	Name          string    `json:"n"`
+	LowerCaseName string    `json:"l"`
+	Id            int       `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
+	Date          string    `json:"d,omitempty"`
+	Nickname      string    `json:"k,omitempty"`
+	Holds         string    `json:"h,omitempty"`
+	Problems      []int     `json:"p,omitempty"`
+	Setter        int       `json:"r,omitempty"`
+	Grade         string    `json:"g,omitempty"`
+	Stars         uint      `json:"s,omitempty"`
+	Ascents       uint      `json:"a,omitempty"`
+	Benchmark     bool      `json:"b,omitempty"`
+	Comment       string    `json:"c,omitempty"`
+	MoonId        uint      `json:"-"`
+	RawDate       time.Time `json:"-"`
 }
 
 type moonTick struct {
@@ -236,7 +239,8 @@ func (s *KeyValueStore) Update(d *database.Database) {
 			Ascents:       r.Pitches,
 			Benchmark:     r.Benchmark,
 			Comment:       r.Comment,
-			// MoonId:            r.Length,
+			MoonId:        r.Length,
+			RawDate:       r.Date,
 		}
 
 		holdMap := make(map[string]bool)
@@ -264,12 +268,26 @@ func (s *KeyValueStore) Update(d *database.Database) {
 		bug.On(len(start) == 0, fmt.Sprintf("%s: No start hold found", r.Name))
 		bug.On(len(finish) == 0, fmt.Sprintf("%s: No finish hold found", r.Name))
 
-		if _, ok = md.Problems[e.Url]; ok {
-			e.Url = fmt.Sprintf("%d-%s", e.Id, e.Url)
-			fmt.Printf("Duplicate Moonboard problem, new URL: %s\n", e.Url)
-			_, ok = md.Problems[e.Url]
+		if existing, ok := md.Problems[e.Url]; ok {
+			ex := &md.Index.Problems[existing]
+			before := ex.RawDate.Before(e.RawDate)
+			if ex.RawDate.Equal(e.RawDate) {
+				bug.On(ex.MoonId == e.MoonId, fmt.Sprintf("Duplicate Moonboard problem: %s, %d and %d\n", e.Url, ex.MoonId, e.MoonId))
+				before = ex.MoonId < e.MoonId
+			}
+			if before {
+				e.Url = fmt.Sprintf("%d-%s", e.MoonId, e.Url)
+				_, ok = md.Problems[e.Url]
+				bug.On(ok, fmt.Sprintf("Duplicate Moonboard problem URL: %s", e.Url))
+				fmt.Printf("Duplicate Moonboard problem, new URL: %s\n", e.Url)
+			} else {
+				ex.Url = fmt.Sprintf("%d-%s", ex.MoonId, ex.Url)
+				_, ok = md.Problems[ex.Url]
+				bug.On(ok, fmt.Sprintf("Duplicate Moonboard problem URL: %s", ex.Url))
+				md.Problems[ex.Url] = existing
+				fmt.Printf("Duplicate Moonboard problem, updated existing URL: %s\n", ex.Url)
+			}
 		}
-		bug.On(ok, fmt.Sprintf("Duplicate Moonboard problem URL: %s", e.Url))
 		md.Problems[e.Url] = i
 
 		md.Index.Problems[i] = e
