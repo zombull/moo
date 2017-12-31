@@ -124,10 +124,10 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
 
     function assertUserData(data, problemUrl, exist, notExist) {
         _.each(exist, function(index) {
-            bug.on(!data[index].hasOwnProperty(problemUrl));
+            bug.on(!data[index].hasOwnProperty(problemUrl), problemUrl);
         });
         _.each(notExist, function(index) {
-            bug.on(data[index].hasOwnProperty(problemUrl));
+            bug.on(data[index].hasOwnProperty(problemUrl), problemUrl);
         });
     }
 

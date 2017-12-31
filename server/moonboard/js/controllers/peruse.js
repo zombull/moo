@@ -31,7 +31,7 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     function problemsFromMap(m, data) {
         var p = [];
         _.each(m, function(v, k) {
-            bug.on(!data.problems.hasOwnProperty(k));
+            bug.on(!data.problems.hasOwnProperty(k), k);
             var problem = data.index.problems[data.problems[k]];
             if (!problem.e && (!grade || problem.g === grade)) {
                 p.push(problem);
