@@ -411,6 +411,7 @@ func SyncProblems(d *database.Database, data []byte) {
 
 		if orig != nil {
 			h2 := d.GetHolds(orig.Id)
+			bug.On(len(h2.Holds) != len(holds.Holds), fmt.Sprintf("Existing Moonboard problem '%s' holds diverge", route.Name))
 			for i := range h2.Holds {
 				bug.On(h2.Holds[i] != holds.Holds[i], fmt.Sprintf("Existing Moonboard problem '%s' holds diverge", route.Name))
 			}
