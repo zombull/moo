@@ -374,8 +374,8 @@ func SyncProblems(d *database.Database, data []byte) {
 			route.Grade, ok = database.FontainebleauToHueco[strings.ToUpper(p.UserGrade)]
 		} else {
 			route.Grade, ok = database.FontainebleauToHueco[strings.ToUpper(p.Grade)]
-			if orig != nil {
-				bug.On(orig.Grade != route.Grade, fmt.Sprintf("Existing Moonboard problem '%s' grade diverges", route.Name))
+			if orig != nil && orig.Grade != route.Grade{
+				fmt.Printf("WARN: problem '%s' grade changed from '%s' to '%s'\n", route.Name, orig.Grade, route.Grade)
 			}
 		}
 		bug.On(!ok, fmt.Sprintf("Unhandled case in 'Grade rating': %v", p.UserGrade))
