@@ -370,7 +370,7 @@ func SyncProblems(d *database.Database, data []byte) {
 		}
 
 		var ok bool
-		if len(p.UserGrade) > 0 {
+		if !route.Benchmark && len(p.UserGrade) > 0 {
 			route.Grade, ok = database.FontainebleauToHueco[strings.ToUpper(p.UserGrade)]
 		} else {
 			route.Grade, ok = database.FontainebleauToHueco[strings.ToUpper(p.Grade)]

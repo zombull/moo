@@ -16,7 +16,7 @@ moon.factory('schema', function () {
     };
     var checksums = {
         images: 'd12cd143a2d69484feaa72d1942bb979',
-        'index.problems': '531a4ef3e0989c64c99cc7d17351bddd',
+        'index.problems': '5008bb7dfb37e732c95f647b3bad83ef',
         'index.setters': 'f8b161f04dbbd58293e6068b103328bc',
         problems: '3cfc4c0b9cf30d23c37145ed1cffd55d',
         setters: '2980da4a154fef74f65558b21060a153',
