@@ -23,15 +23,13 @@ import (
 )
 
 type KeyValueStore struct {
-	server string
 	cache  string
 	data   map[string][]byte
 	sums   map[string][]byte
 }
 
-func NewStore(server, cache string) *KeyValueStore {
+func NewStore(cache string) *KeyValueStore {
 	s := KeyValueStore{
-		server: server,
 		cache:  cache,
 		data:   make(map[string][]byte),
 		sums:   make(map[string][]byte),
@@ -169,7 +167,7 @@ func getSetterUrl(s string) string {
 	return "s/" + url.PathEscape(sanitize(s))
 }
 
-func (s *KeyValueStore) Update(d *database.Database) {
+func (s *KeyValueStore) Update(d *database.Database, server string) {
 	setters := d.GetSetters(moonboard.Id(d))
 	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", moonboard.Id(d)))
 
@@ -308,7 +306,7 @@ func (s *KeyValueStore) Update(d *database.Database) {
 		}
 	}
 
-	imgDir := path.Join(s.server, "img")
+	imgDir := path.Join(server, "img")
 	for i := 0; i < 150; i++ {
 		if i > 40 && i < 50 {
 			continue

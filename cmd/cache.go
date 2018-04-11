@@ -38,7 +38,7 @@ func cacheCmd(db func() *database.Database, c, s string) *cobra.Command {
 
 func cache(opts *cacheOpts) {
 	if opts.update {
-		store := server.NewStore(path.Join(opts.server, "moonboard"), path.Join(opts.cache, "moonboard"))
-		store.Update(opts.d)
+		store := server.NewStore(path.Join(opts.cache, "moonboard"))
+		store.Update(opts.d, path.Join(opts.server, "moonboard"))
 	}
 }

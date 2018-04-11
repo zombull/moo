@@ -24,7 +24,7 @@ func Init(server, cache string) *Server {
 }
 
 func (s *Server) Run(port string, release bool) {
-	s.store = NewStore(path.Join(s.dir, "moonboard"), path.Join(s.cache, "moonboard"))
+	s.store = NewStore(path.Join(s.cache, "moonboard"))
 	common := path.Join(s.dir, "common")
 	if release {
 		common = path.Join(s.dir, "moonboard")
