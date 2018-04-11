@@ -135,14 +135,6 @@ type moonEntry struct {
 	RawDate       time.Time `json:"-"`
 }
 
-type moonTick struct {
-	Date     string `json:"d"`
-	Grade    string `json:"g"`
-	Stars    uint   `json:"s"`
-	Attempts uint   `json:"a"`
-	Sessions uint   `json:"e,omitempty"`
-}
-
 type moonIndex struct {
 	Problems []moonEntry
 	Setters  []moonEntry
@@ -152,7 +144,6 @@ type moonData struct {
 	Problems map[string]int
 	Setters  map[string]int
 	Images   []string
-	Ticks    map[string]moonTick
 }
 
 func getProblemUrl(s string) string {
@@ -182,7 +173,6 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
 		Images:   make([]string, 233),
-		Ticks:    make(map[string]moonTick),
 	}
 
 	for _, r := range setters {
@@ -290,20 +280,6 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 
 		md.Index.Problems[i] = e
 		md.Index.Setters[setter].Problems = append(md.Index.Setters[setter].Problems, i)
-
-		t := d.GetTicks(r.Id)
-		if len(t) > 0 {
-			mt := moonTick{
-				Date:     t[0].Date.Format("January 02, 2006"),
-				Grade:    t[0].Grade,
-				Stars:    t[0].Stars,
-				Attempts: t[0].Attempts,
-			}
-			if t[0].Sessions > 0 {
-				mt.Sessions = t[0].Sessions
-			}
-			md.Ticks[e.Url] = mt
-		}
 	}
 
 	imgDir := path.Join(server, "img")
@@ -326,5 +302,4 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 	s.export("moonboard.images", s.cache, md.Images)
 	s.export("moonboard.problems", s.cache, md.Problems)
 	s.export("moonboard.setters", s.cache, md.Setters)
-	s.export("moonboard.ticks", s.cache, md.Ticks)
 }
