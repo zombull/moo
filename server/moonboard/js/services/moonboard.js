@@ -206,7 +206,10 @@ moon.factory('moonboard', function ($q, $document, database) {
         borders = [];
         containers = new Map();
     
-        stage.addChild(new createjs.Bitmap('data:image/png;base64,'+images[0]));
+        var background = new createjs.Bitmap('data:image/png;base64,'+images[0]);
+        background.scaleX = 0.66;
+        background.scaleY = 0.66;
+        stage.addChild(background);
         
         _.each(board.holds, function(hold) {
             var img = new Image();
@@ -219,6 +222,8 @@ moon.factory('moonboard', function ($q, $document, database) {
                 container.y = board.ycoords[hold.loc.substring(1)];
                 container.rotation = board.rotation[hold.dir];
                 container.z = 1;
+                container.scaleX = 0.666;
+                container.scaleY = 0.666;
     
                 var bmp = new createjs.Bitmap(this);
                 container.addChild(bmp);
@@ -237,7 +242,7 @@ moon.factory('moonboard', function ($q, $document, database) {
         _.each(holds, function(loc, id) {
             var container = containers.get(loc);
             var border = new createjs.Shape();
-            border.graphics.setStrokeStyle(4).beginStroke(color).drawCircle(container.regX, container.regY, 20);
+            border.graphics.setStrokeStyle(6).beginStroke(color).drawCircle(container.regX, container.regY, 30);
             container.addChild(border);
             container.z = 2;
             borders.push(border);

@@ -181,7 +181,7 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 		},
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
-		Images:   make([]string, 150),
+		Images:   make([]string, 233),
 		Ticks:    make(map[string]moonTick),
 	}
 
@@ -307,8 +307,8 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 	}
 
 	imgDir := path.Join(server, "img")
-	for i := 0; i < 150; i++ {
-		if i > 40 && i < 50 {
+	for i := 0; i < 233; i++ {
+		if i > 41 && i < 50 {
 			continue
 		}
 		n := "board"
