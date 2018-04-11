@@ -160,7 +160,8 @@ host.factory('storage', function ($q, bug, schema) {
                         if (error) {
                             callback(null, error);
                         } else {
-                            doUpdate(name, callback);
+                            localStorage.setItem('checksums', JSON.stringify({}));
+                            alert("Please reload, checksums got out of whack");
                         }
                     }
                 );
