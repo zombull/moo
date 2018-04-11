@@ -23,31 +23,39 @@ func Init(server, cache string) *Server {
 	}
 }
 
-func (s *Server) Run(port string, release bool) {
-	s.store = NewStore(path.Join(s.cache, "moonboard"))
+func (s *Server) newMoon(release bool, year string) *echo.Echo {
+	moon := echo.New()
+	subName := "moonboard" + year
+
 	common := path.Join(s.dir, "common")
 	if release {
-		common = path.Join(s.dir, "moonboard")
+		common = path.Join(s.dir, subName)
 	}
 
-	moon := echo.New()
-
-	index := path.Join(s.dir, "moonboard", "index.html")
+	index := path.Join(s.dir, subName, "index.html")
 	for _, r := range []string{"/", "/:problem", "/q/:query", "/p/:grade", "/t/:grade", "/k/:grade", "/j/:grade", "/s/:setter", "/st/:setter"} {
 		moon.File(r, index)
 	}
 
 	moon.Static("/favicon", path.Join(common, "img", "favicon"))
-	moon.Static("/static", path.Join(s.dir, "moonboard"))
+	moon.Static("/static", path.Join(s.dir, subName))
 	moon.Static("/common", common)
-	moon.GET("/data/:key", s.store.getValue("moonboard"))
+	moon.GET("/data/:key", s.store.getValue(subName))
+
+	return moon
+}
+
+func (s *Server) Run(port string, release bool) {
+	s.store = NewStore(path.Join(s.cache, "moonboard"))
 
 	echoes := map[string]*echo.Echo{
-		"moon": moon,
+		"moon": s.newMoon(release, ""),
+		"moon2016": s.newMoon(release, "2016"),
 	}
 
 	subs := map[string]string{
 		"dark": "moonboard",
+		"dark2016": "moonboard2016",
 	}
 
 	// Server
