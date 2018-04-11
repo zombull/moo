@@ -36,7 +36,7 @@ type Config struct {
 
 	// Specify the Moonboard set, i.e. year and holds combination.
 	// Env Var: FC_MOONBOARD_SET
-	// Default: "MoonBoard 2016"
+	// Default: "MoonBoard 2017"
 	MoonboardSet string `yaml:"moonboard_set"`
 }
 
@@ -63,7 +63,7 @@ func loadConfig() *Config {
 		Cache:        path.Join(dir, "Development", "go", "src", "github.com", "zombull", "cache-floating-castle"),
 		Database:     path.Join(dir, "Development", "go", "src", "github.com", "zombull", "db-floating-castle", "sqlite3"),
 		Server:       path.Join(dir, "Development", "go", "src", "github.com", "zombull", "floating-castle", "server"),
-		MoonboardSet: "MoonBoard 2016",
+		MoonboardSet: "MoonBoard 2017",
 	}
 
 	path := loadEnvVar("CONFIG", c.Config)

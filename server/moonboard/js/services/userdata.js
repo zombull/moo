@@ -4,7 +4,7 @@
 moon.factory('userdata', function ($q, bug, storage, drive) {
     'use strict';
 
-    var USER_DATA = 'zombull.moonboard.2016.userdata.json';
+    var USER_DATA = 'zombull.moonboard.2017.userdata.json';
     var USER_DATA_KEYS = ['projects', 'ticks', 'exiles'];
 
     var __drive = $q.defer();
