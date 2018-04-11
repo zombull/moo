@@ -323,10 +323,10 @@ func (s *KeyValueStore) Update(d *database.Database) {
 		md.Images[i] = base64.StdEncoding.EncodeToString(img)
 	}
 
-	s.export("moonboard.index.problems", s.cache, md.Index.Problems)
-	s.export("moonboard.index.setters", s.cache, md.Index.Setters)
-	s.export("moonboard.images", s.cache, md.Images)
-	s.export("moonboard.problems", s.cache, md.Problems)
-	s.export("moonboard.setters", s.cache, md.Setters)
-	s.export("moonboard.ticks", s.cache, md.Ticks)
+	s.export("moonboard2016.index.problems", s.cache, md.Index.Problems)
+	s.export("moonboard2016.index.setters", s.cache, md.Index.Setters)
+	s.export("moonboard2016.images", s.cache, md.Images)
+	s.export("moonboard2016.problems", s.cache, md.Problems)
+	s.export("moonboard2016.setters", s.cache, md.Setters)
+	s.export("moonboard2016.ticks", s.cache, md.Ticks)
 }

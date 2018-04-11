@@ -67,7 +67,7 @@ gulp.task('server', /*['checksums'],*/ function() {
         return inject.transform.apply(inject.transform, arguments);
     }
 
-    var server = destination.fc + '/moonboard';
+    var server = destination.fc + '/moonboard2016';
 
     var html = gulp.src(source.html)
         .pipe(minifyHTML({empty: true}))                         // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
@@ -103,7 +103,7 @@ gulp.task('server', /*['checksums'],*/ function() {
 
     return gulp.src(source.index)
         .pipe(gulp.dest(server))                                // Necessary to set the path so injection works correctly.
-        .pipe(replace(/<base href=.*>/, '<base href="http://moon.zombull.xyz/">'))
+        .pipe(replace(/<base href=.*>/, '<base href="http://moon2016.zombull.xyz/">'))
         .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
         .pipe(replace('ng-app', 'ng-strict-di ng-app'))
         .pipe(inject(css, {relative: true, addPrefix: 'static', transform: checksum}))

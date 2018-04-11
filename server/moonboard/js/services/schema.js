@@ -3,9 +3,9 @@ moon.factory('schema', function () {
 
     var requests = {};
 
-    var subdomains = { 'dark': {} };
+    var subdomains = { 'dark2016': {} };
     var metadata = {
-        'index.problems': { subdomain: 'dark' },
+        'index.problems': { subdomain: 'dark2016' },
         'index.setters': { local: true },
         images: { local: true },
         problems: { local: true },
