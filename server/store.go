@@ -171,7 +171,7 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 	setters := d.GetSetters(moonboard.Id(d))
 	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", moonboard.Id(d)))
 
-	routes := d.GetAllRoutes(moonboard.Id(d))
+	routes := d.GetRoutes(moonboard.Id(d), moonboard.SetId(d))
 	bug.On(len(routes) == 0, fmt.Sprintf("No moonboard routes found: %d", moonboard.Id(d)))
 
 	md := moonData{
