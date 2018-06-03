@@ -103,7 +103,7 @@ gulp.task('server', /*['checksums'],*/ function() {
 
     return gulp.src(source.index)
         .pipe(gulp.dest(server))                                // Necessary to set the path so injection works correctly.
-        .pipe(replace(/<base href=.*>/, '<base href="http://moon2016.zombull.xyz/">'))
+        .pipe(replace(/<base href=.*>/, '<base href="https://moon2016.zombull.xyz/">'))
         .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
         .pipe(replace('ng-app', 'ng-strict-di ng-app'))
         .pipe(inject(css, {relative: true, addPrefix: 'static', transform: checksum}))
