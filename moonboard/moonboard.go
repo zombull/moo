@@ -100,6 +100,8 @@ func regexParseUint(r *regexp.Regexp, s string, optional bool) (uint, bool) {
 }
 
 func sanitize(s string) string {
+	s = strings.TrimSpace(s)
+
 	if strings.HasPrefix(s, "ACG") {
 		return s
 	}
