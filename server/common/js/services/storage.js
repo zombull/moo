@@ -14,7 +14,7 @@ host.factory('storage', function ($q, bug, schema) {
             function(source) {
                 subdomain.window = document.getElementById(name).contentWindow;
                 subdomain.postMessage = function(message) {
-                    this.window.postMessage(message, 'http://' + name + '.zombull.xyz:3000');
+                    this.window.postMessage(message, 'https://' + name + '.zombull.xyz:3000');
                 };
                 subdomain.postMessage('pong');
             },
@@ -26,7 +26,7 @@ host.factory('storage', function ($q, bug, schema) {
     });
 
     function onMessage(event) {
-        var match = event.origin.match(/^http:\/\/([A-Za-z0-9-]+)\.zombull\.xyz:3000$/);
+        var match = event.origin.match(/^https:\/\/([A-Za-z0-9-]+)\.zombull\.xyz:3000$/);
         if (match && schema.subdomains.hasOwnProperty(match[1])) {
             if (event.data === 'ping') {
                 if (!schema.subdomains[match[1]].postMessage) {
