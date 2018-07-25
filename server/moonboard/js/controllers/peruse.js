@@ -22,8 +22,8 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
         grade = false;
     } else {
         var vgrade = parseInt(grade.substring(1));
-        if (grade.substring(0, 1) !== 'V' || isNaN(vgrade) || vgrade < 4 || vgrade > 17) {
-            $scope.error = $scope.error || { status: 404, data: '"' + $routeParams.grade + '" is not a valid grade: must be V4-V17 or ALL.' };
+        if (grade.substring(0, 1) !== 'V' || isNaN(vgrade) || vgrade < 3 || vgrade > 17) {
+            $scope.error = $scope.error || { status: 404, data: '"' + $routeParams.grade + '" is not a valid grade: must be V3-V17 or ALL.' };
             return;
         }
     }
