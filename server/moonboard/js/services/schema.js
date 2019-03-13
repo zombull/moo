@@ -16,10 +16,10 @@ moon.factory('schema', function () {
     };
     var checksums = {
         images: 'a689dbfef34cdd7bbc2fd6a27f6d5075',
-        'index.problems': '09f9a1767c2a3b2764bdc7c0591a31f4',
-        'index.setters': 'afdf0006a9f4dbc479facbf587af94dc',
-        problems: 'c34adcad3665627a3942b3f0969aece4',
-        setters: 'fdf1d9d495c8ad90fd35432f8ea1b92c',
+        'index.problems': '7a2999feaa8b427bc89ff0e9249a177f',
+        'index.setters': '8398041e76481601230b98e0f5c19d25',
+        problems: '8a71ac383ad40d30feffb7977b7dfc34',
+        setters: 'deaa13d5238bf478734986fb44b9b1f5',
     };
 
     return {
