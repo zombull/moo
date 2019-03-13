@@ -20,18 +20,18 @@ type Config struct {
 	// Cache is the path to the directory where semi-permanent, non-database
 	// files are stored, e.g. the JSON representation of the database.
 	// Env Var: FC_CACHE
-	// Default: $HOME/Development/go/src/github.com/zombull/cache-floating-castle
+	// Default: $HOME/go/src/github.com/zombull/cache-floating-castle
 	Cache string `yaml:"cache"`
 
 	// Database is the path to the directory where the SQLite database
 	// exists (or is created).
 	// Env Var: FC_DATABASE
-	// Default: $HOME/Development/go/src/github.com/zombull/db-floating-castle/sqlite3
+	// Default: $HOME/go/src/github.com/zombull/db-floating-castle/sqlite3
 	Database string `yaml:"database"`
 
 	// Server is the path to the root directory of the web server.
 	// Env Var: FC_SERVER
-	// Default: $HOME/Development/go/src/github.com/zombull/floating-castle/server
+	// Default: $HOME/go/src/github.com/zombull/floating-castle/server
 	Server string `yaml:"server"`
 
 	// Specify the Moonboard set, i.e. year and holds combination.
@@ -60,9 +60,9 @@ func loadConfig() *Config {
 	}
 	c := Config{
 		Config:       path.Join(dir, ".config", "floating-castle", "config.yml"),
-		Cache:        path.Join(dir, "Development", "go", "src", "github.com", "zombull", "cache-floating-castle"),
-		Database:     path.Join(dir, "Development", "go", "src", "github.com", "zombull", "db-floating-castle", "sqlite3"),
-		Server:       path.Join(dir, "Development", "go", "src", "github.com", "zombull", "floating-castle", "server"),
+		Cache:        path.Join(dir, "go", "src", "github.com", "zombull", "cache-floating-castle"),
+		Database:     path.Join(dir, "go", "src", "github.com", "zombull", "db-floating-castle", "sqlite3"),
+		Server:       path.Join(dir, "go", "src", "github.com", "zombull", "floating-castle", "server"),
 		MoonboardSet: "MoonBoard 2017",
 	}
 
