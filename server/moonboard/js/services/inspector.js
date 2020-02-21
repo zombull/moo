@@ -7,8 +7,9 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
     var __results = [];
 
     var filter = function(options, index, browsing) {
-        if (options.benchmark !== null ||options.ticked !== null || options.project !== null ||
-            options.exiled !== null || options.upgraded != null || options.downgraded !== null ||
+        if (options.benchmark !== null || options.ticked !== null || options.project !== null ||
+            options.todo !== null || options.exiled !== null || options.upgraded != null ||
+            options.downgraded !== null ||
             options.grade || options.ascents || options.stars || options.query || options.setby ||
             options.setter || options.holds || options.noholds) {
 
@@ -21,7 +22,8 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
                  */
                 return  (options.benchmark === null || entry.hasOwnProperty('b') === options.benchmark) &&
                         (options.ticked === null || (entry.t !== null) === options.ticked) &&
-                        (options.project === null || (entry.p !== null) === options.project) &&
+                        (options.project === null || (entry.p !== null && (entry.p.s >= 2 || entry.p.a >= 4) === options.project)) &&
+                        (options.todo === null || (entry.p !== null && (entry.p.s < 2 && entry.p.a < 4) === options.todo)) &&
                         (options.exiled === null || entry.e === options.exiled) &&
                         (options.upgraded === null || (entry.hasOwnProperty('w') && entry.w < entry.v === options.upgraded)) &&
                         (options.downgraded === null || (entry.hasOwnProperty('w') && entry.w > entry.v === options.downgraded)) &&
@@ -55,6 +57,7 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
         benchmark: /\s+(\!|@)b/,
         ticked: /\s+(\!|@)t/,
         project: /\s+(\!|@)p/,
+        todo: /\s+(\!|@)o/,
         exiled: /\s+(\!|@)e/,
         upgraded: /\s+(\!|@)u/,
         downgraded: /\s+(\!|@)d/,
@@ -114,6 +117,7 @@ moon.factory('inspector', function ($location, $q, bug, database, problems, calc
                 options.benchmark = processRegEx(options, regExs.benchmark, truthiness);
                 options.ticked = processRegEx(options, regExs.ticked, truthiness);
                 options.project = processRegEx(options, regExs.project, truthiness);
+                options.todo = processRegEx(options, regExs.todo, truthiness);
                 options.exiled = processRegEx(options, regExs.exiled, truthiness);
                 options.upgraded = processRegEx(options, regExs.upgraded, truthiness);
                 options.downgraded = processRegEx(options, regExs.downgraded, truthiness);

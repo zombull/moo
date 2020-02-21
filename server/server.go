@@ -33,7 +33,7 @@ func (s *Server) newMoon(release bool, year string) *echo.Echo {
 	}
 
 	index := path.Join(s.dir, subName, "index.html")
-	for _, r := range []string{"/", "/:problem", "/q/:query", "/p/:grade", "/t/:grade", "/k/:grade", "/j/:grade", "/s/:setter", "/st/:setter"} {
+	for _, r := range []string{"/", "/:problem", "/q/:query", "/p/:grade", "/t/:grade", "/k/:grade", "/j/:grade", "/o/:grade", "/s/:setter", "/st/:setter"} {
 		moon.File(r, index)
 	}
 
@@ -49,12 +49,12 @@ func (s *Server) Run(port string, release bool) {
 	s.store = NewStore(path.Join(s.cache, "moonboard"))
 
 	echoes := map[string]*echo.Echo{
-		"moon": s.newMoon(release, ""),
+		"moon":     s.newMoon(release, ""),
 		"moon2016": s.newMoon(release, "2016"),
 	}
 
 	subs := map[string]string{
-		"dark": "moonboard",
+		"dark":     "moonboard",
 		"dark2016": "moonboard2016",
 	}
 

@@ -9,9 +9,10 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     var rp = $location.path().split('/')[1].toLowerCase();
     var showTicks = (rp === 't');
     var showProjects = (rp === 'j');
+    var showTodo = (rp === 'o');
     var historyKey = rp + '.' + $routeParams.grade.toLowerCase();
 
-    $scope.title = showProjects ? 'Projects' : showTicks ? 'Ticks' : 'Problems';
+    $scope.title = showTodo ? 'Todo' : showProjects ? 'Projects' : showTicks ? 'Ticks' : 'Problems';
 
     if (!browse.ready($scope, $routeParams.page, historyKey)) {
         return;
@@ -41,8 +42,16 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
     }
 
     database.all(function(data) {
-        if (showProjects) {
+        if (showTodo) {
             __problems = problemsFromMap(data.projects, data);
+            __problems = __problems.filter(function(problem) {
+                return problem.p.s < 2 && problem.p.a < 4;
+            });
+        } else if (showProjects) {
+            __problems = problemsFromMap(data.projects, data);
+            __problems = __problems.filter(function(problem) {
+                return problem.p.s >= 2 || problem.p.a >= 4;
+            });
         } else if (showTicks) {
             __problems = problemsFromMap(data.ticks, data);
             __problems.sort(function(a, b) {

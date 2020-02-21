@@ -14,6 +14,10 @@ moon.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/html/browse.html',
         controller: 'QueryController as ctrl'
     })
+    .when('/o/:grade', {
+        templateUrl: 'static/html/browse.html',
+        controller: 'PeruseController as ctrl'
+    })
     .when('/p/:grade', {
         templateUrl: 'static/html/browse.html',
         controller: 'PeruseController as ctrl'
