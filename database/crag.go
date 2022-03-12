@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/zombull/floating-castle/bug"
+	"github.com/zombull/moo/bug"
 )
 
 type Crag struct {

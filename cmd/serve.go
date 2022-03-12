@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/zombull/floating-castle/server"
+	"github.com/zombull/moo/server"
 )
 
 type serveOpts struct {

@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/zombull/floating-castle/bug"
-	"github.com/zombull/floating-castle/database"
+	"github.com/zombull/moo/bug"
+	"github.com/zombull/moo/database"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "floating-castle <COMMAND>",
+	Use:   "moo <COMMAND>",
 	Short: "TODO",
 	Long:  `Even more verbose`,
 }

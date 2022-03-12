@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/zombull/floating-castle/database"
-	"github.com/zombull/floating-castle/server"
+	"github.com/zombull/moo/database"
+	"github.com/zombull/moo/server"
 )
 
 type cacheOpts struct {
@@ -39,6 +39,6 @@ func cacheCmd(db func() *database.Database, c, s string) *cobra.Command {
 func cache(opts *cacheOpts) {
 	if opts.update {
 		store := server.NewStore(path.Join(opts.cache, "moonboard"))
-		store.Update(opts.d, path.Join(opts.server, "moonboard"))
+		store.Update(opts.d, opts.server, "moonboard")
 	}
 }

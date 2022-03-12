@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/zombull/floating-castle/bug"
+	"github.com/zombull/moo/bug"
 )
 
 var RouteTypes = Set{

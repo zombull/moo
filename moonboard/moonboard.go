@@ -10,56 +10,47 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zombull/floating-castle/bug"
-	"github.com/zombull/floating-castle/database"
-	"github.com/zombull/floating-castle/moonboard/mb"
+	"github.com/zombull/moo/bug"
+	"github.com/zombull/moo/database"
+	"github.com/zombull/moo/moonboard/mb"
 )
-
-var setName = ""
 
 const Name = "Moonboard"
 
-func Init(d *database.Database, set string) {
+func Init(d *database.Database) {
 	exists := d.Exists(Name, "crags")
-
-	setName = strings.TrimSpace(set)
-	if len(setName) == 0 {
-		if exists {
-			fmt.Printf("Moonboard exists in your database but no set is defined in your config!\n\n")
-		}
-		return
-	}
-
 	if !exists {
 		c := database.Crag{
 			Name:     Name,
 			Location: "Portland Rock Gym",
-			Url:      "https://www.moonboard.com/Problems/Index",
-			Map:      "https://www.moonboard.com/Problems/Index",
+			Url:      "https://www.moonboard.com",
+			Map:      "https://www.moonboard.com",
 		}
 		d.Insert(&c)
 	}
-	if !d.Exists(setName, "areas") {
-		a := database.Area{
-			CragId: d.GetCragId(Name),
-			Name:   setName,
-			Url:    "https://www.moonboard.com/Problems/Index",
+
+	cragId := d.GetCragId(Name)
+
+	for _, yyyy := range []string{ "2016", "2017", "2019" } {
+		s := "MoonBoard " + yyyy
+
+		if !d.Exists(s, "areas") {
+			a := database.Area{
+				CragId: cragId,
+				Name:   s,
+				Url:    "https://www.moonboard.com/Problems/Index",
+			}
+			d.Insert(&a)
 		}
-		d.Insert(&a)
 	}
 }
 
-func SetDefined() bool {
-	return len(setName) > 0
-}
-
-func Id(d *database.Database) int64 {
+func CragId(d *database.Database) int64 {
 	return d.GetCragId(Name)
 }
 
-func SetId(d *database.Database) int64 {
-	bug.On(!SetDefined(), "accessing undefined Moonboard set")
-	return d.GetAreaId(Id(d), setName)
+func SetId(d *database.Database, setName string) int64 {
+	return d.GetAreaId(CragId(d), setName)
 }
 
 var attemptsRegex = regexp.MustCompile(`Attempts: ([0-9]+)`)
@@ -299,9 +290,9 @@ func country(s string) string {
 	return sanitize(s)
 }
 
-func SyncProblems(d *database.Database, data []byte) {
-	cragId := Id(d)
-	setId := SetId(d)
+func SyncProblemsJSON(d *database.Database, setName string, data []byte) {
+	cragId := CragId(d)
+	setId := SetId(d, setName)
 
 	problems := mb.Problems{}
 	err := json.Unmarshal(data, &problems)
@@ -425,5 +416,42 @@ func SyncProblems(d *database.Database, data []byte) {
 		} else {
 			d.InsertDoubleLP(route, holds)
 		}
+	}
+}
+
+func Transfer(d, src *database.Database) {
+	crags := src.GetCrags()
+	bug.On(len(crags) != 1, "Multiple crags in the source, I'm lazy...")
+
+	areas := src.GetAreas(crags[0].Id)
+	bug.On(len(areas) != 1, "Multiple areas in the source, I'm lazy...")
+
+	routes := src.GetRoutes(crags[0].Id, areas[0].Id)
+	bug.On(len(areas) == 0, "No routes found in the source")
+
+	cragId := CragId(d)
+	setId := SetId(d, areas[0].Name)
+
+	for _, r := range routes {
+
+		h := src.GetHolds(r.Id)
+		s := src.GetSetter(r.SetterId)
+
+		h.RouteId = 0
+		r.Id = 0
+		r.CragId = cragId
+		r.AreaId = setId
+
+		setter := d.FindSetter(cragId, s.Name)
+		if setter == nil {
+			setter = s
+			d.Insert(setter)
+		} else if setter.Nickname != s.Nickname && len(setter.Nickname) == 0 {
+			setter.Nickname = s.Nickname
+			d.Update(setter)
+		}
+		r.SetterId = setter.Id
+
+		d.InsertDoubleLP(r, h)
 	}
 }

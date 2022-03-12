@@ -3,12 +3,11 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"path"
 	"strings"
 	"time"
 
 	sqlite3 "github.com/mattn/go-sqlite3"
-	"github.com/zombull/floating-castle/bug"
+	"github.com/zombull/moo/bug"
 )
 
 var TableTypes = Set{
@@ -74,12 +73,11 @@ type DoubleLP struct {
 
 const SCHEMA string = CRAG_SCHEMA + AREA_SCHEMA + ROUTE_SCHEMA + HOLDS_SCHEMA + TICK_SCHEMA + LIST_SCHEMA + SETTER_SCHEMA
 
-func Init(dir string) *Database {
+func Init(path string) *Database {
 	timeout := 5 // TODO - make this command-line configurable?
 
 	// These are used to tune the transaction BEGIN behavior instead of using the
 	// similar "locking_mode" pragma (locking for the whole database connection).
-	path := path.Join(dir, "floating-castle.db")
 	path = fmt.Sprintf("%s?_busy_timeout=%d&_txlock=exclusive", path, timeout*1000)
 
 	// Open the database.  Automatically created if it doesn't exist.

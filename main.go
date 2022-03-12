@@ -1,19 +1,19 @@
 package main
 
 import (
-	"os"
+	"path"
 
-	"github.com/zombull/floating-castle/cmd"
-	"github.com/zombull/floating-castle/database"
-	"github.com/zombull/floating-castle/moonboard"
+	"github.com/zombull/moo/cmd"
+	"github.com/zombull/moo/database"
+	"github.com/zombull/moo/moonboard"
 )
 
 func main() {
 	c := loadConfig()
 
 	db := func() *database.Database {
-		d := database.Init(c.Database)
-		moonboard.Init(d, c.MoonboardSet)
+		d := database.Init(path.Join(c.Database, "moo.db"))
+		moonboard.Init(d)
 		return d
 	}
 
