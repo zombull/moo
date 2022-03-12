@@ -24,13 +24,18 @@ import (
 
 type KeyValueStore struct {
 	cache  string
+	server string
 	data   map[string][]byte
 	sums   map[string][]byte
 }
 
-func NewStore(cache string) *KeyValueStore {
+func NewStore(cache, server string) *KeyValueStore {
+	cache = path.Join(cache, "moonboard")
+	server = path.Join(server, "moonboard")
+
 	s := KeyValueStore{
 		cache:  cache,
+		server: server,
 		data:   make(map[string][]byte),
 		sums:   make(map[string][]byte),
 	}
@@ -93,14 +98,18 @@ func checksum(b []byte) []byte {
 	return []byte(fmt.Sprintf("%x", md5.Sum(b)))
 }
 
-func (s *KeyValueStore) export(k, d string, v interface{}) {
+func (s *KeyValueStore) export(p, k, d string, v interface{}, sums map[string][]byte) {
 	b, err := json.Marshal(v)
 	bug.OnError(err)
-	s.data[k] = b
-	s.sums[k] = checksum(b)
-	err = ioutil.WriteFile(path.Join(d, k+".json"), b, 0644)
+
+	key := p + "." + k
+	s.data[key] = b
+	err = ioutil.WriteFile(path.Join(d, key + ".json"), b, 0644)
 	bug.OnError(err)
-	err = ioutil.WriteFile(path.Join(d, k+".md5"), checksum(b), 0644)
+
+	sums[k] = checksum(b)
+	s.sums[key] = sums[k]
+	err = ioutil.WriteFile(path.Join(d, key + ".md5"), sums[k], 0644)
 	bug.OnError(err)
 }
 
@@ -158,12 +167,18 @@ func getSetterUrl(s string) string {
 	return "s/" + url.PathEscape(sanitize(s))
 }
 
-func (s *KeyValueStore) Update(d *database.Database, server string) {
-	setters := d.GetSetters(moonboard.Id(d))
-	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", moonboard.Id(d)))
+func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
+	cragId := moonboard.CragId(d)
 
-	routes := d.GetRoutes(moonboard.Id(d), moonboard.SetId(d))
-	bug.On(len(routes) == 0, fmt.Sprintf("No moonboard routes found: %d", moonboard.Id(d)))
+	setters := d.GetSetters(cragId)
+	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", cragId))
+
+	routes := d.GetRoutes(cragId, area.Id)
+	if (len(routes) == 0 && area.Name == "MoonBoard 2019") {
+		return
+	}
+
+	bug.On(len(routes) == 0, fmt.Sprintf("No moonboard routes found: %d %d", cragId, area.Id))
 
 	md := moonData{
 		Index: moonIndex{
@@ -172,7 +187,7 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 		},
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
-		Images:   make([]string, 233),
+		Images:   make([]string, 281),
 	}
 
 	for _, r := range setters {
@@ -282,24 +297,40 @@ func (s *KeyValueStore) Update(d *database.Database, server string) {
 		md.Index.Setters[setter].Problems = append(md.Index.Setters[setter].Problems, i)
 	}
 
-	imgDir := path.Join(server, "img")
-	for i := 0; i < 233; i++ {
+	imgDir := path.Join(s.server, "img")
+
+	// Plastic holds are 1 - 40 and 51 - 201, but hold 201 is shifted to
+	// 41 so that the wood holds can sanely start at 201.  The board is
+	// slotted in at 0, thus 0..280 images, with holes at 42..50.
+	for i := 0; i < 281; i++ {
 		if i > 41 && i < 50 {
 			continue
 		}
 		n := "board"
-		if i > 0 {
+		if (i > 200) {
+			n = "w" + strconv.Itoa(i - 200)
+		} else if i > 0 {
 			n = strconv.Itoa(i)
 		}
+
 		img, err := ioutil.ReadFile(path.Join(imgDir, n+".png"))
 		bug.OnError(err)
 
 		md.Images[i] = base64.StdEncoding.EncodeToString(img)
 	}
 
-	s.export("moonboard.index.problems", s.cache, md.Index.Problems)
-	s.export("moonboard.index.setters", s.cache, md.Index.Setters)
-	s.export("moonboard.images", s.cache, md.Images)
-	s.export("moonboard.problems", s.cache, md.Problems)
-	s.export("moonboard.setters", s.cache, md.Setters)
+	sums := make(map[string][]byte)
+
+	prefix := strings.Replace(strings.ToLower(area.Name), " ", "", -1)
+	s.export(prefix, "index.problems", s.cache, md.Index.Problems, sums)
+	s.export(prefix, "index.setters", s.cache, md.Index.Setters, sums)
+	s.export(prefix, "images", s.cache, md.Images, sums)
+	s.export(prefix, "problems", s.cache, md.Problems, sums)
+	s.export(prefix, "setters", s.cache, md.Setters, sums)
+
+	sumj, err := json.Marshal(sums)
+	bug.OnError(err)
+
+	err = ioutil.WriteFile(path.Join(s.server, prefix + "md5.json"), sumj, 0644)
+	bug.OnError(err)
 }

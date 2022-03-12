@@ -7,10 +7,10 @@
         <script>
             (function() {
                 window.addEventListener('message', onMessage, false);
-                var interval = setInterval(function() { parent.postMessage('ping', 'https://moon.zombull.xyz:3000'); }, 100);
+                var interval = setInterval(function() { parent.postMessage('ping', 'https://moonZZZZ.zombull.xyz:3000'); }, 100);
 
                 function onMessage(event) {
-                    if (event.origin === 'https://moon.zombull.xyz:3000') {
+                    if (event.origin === 'https://moonZZZZ.zombull.xyz:3000') {
                         if (event.data === 'pong') {
                             clearInterval(interval);
                         }

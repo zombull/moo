@@ -2,6 +2,7 @@
 
 var del = require('del'),
     crypto = require('crypto'),
+    fs = require('fs'),
     gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     concat = require('gulp-concat'),
@@ -29,7 +30,7 @@ var source = {
 };
 
 var destination = {
-    fc: 'release/fc',
+    moo: 'release/moo',
 }
 
 gulp.task('clean', function() {
@@ -58,16 +59,15 @@ gulp.task('jshint', function() {
 //         .pipe(gulp.dest('public/js/services'));
 // });
 
-// This is a rather large task, but it makes sense because we're injecting CSS and JS into index.html.
-// The overall amount of code is relatively small so it's not like it's taking a huge amount of time.
-// The alternative would be to duplicate generation of the CSS and JS paths
-gulp.task('server', /*['checksums'],*/ function() {
+function gulpYear(year) {
     var checksum = function(filepath, file) {
         filepath = filepath + '?version=' + crypto.createHash('md5').update(file.contents.toString('utf8')).digest('hex');
         return inject.transform.apply(inject.transform, arguments);
     }
 
-    var server = destination.fc + '/moonboard';
+    var sums = fs.readFileSync("moonboard/moonboard" + year + "md5.json", "utf8");
+
+    var server = destination.moo + '/moonboard' + year;
 
     var html = gulp.src(source.html)
         .pipe(minifyHTML({empty: true}))                         // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
@@ -82,7 +82,9 @@ gulp.task('server', /*['checksums'],*/ function() {
 
     var js = gulp.src(source.js)
         .pipe(concat('moon.js'))                                // Concatenate everything into a single JS file.
-        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
+        .pipe(replace('SCHEMA_CHECKSUMS', sums))
+        .pipe(replace('ZZZZ', year))                            // Replace year in subdomain references
+        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off subdomain references
         .pipe(ngAnnotate({add: true, single_quotes: true}))     // Annotate angular code
         .pipe(gulp.dest(server + '/js'))                        // Save concatenated and annotated file before minification.
         .pipe(rename({extname: ".min.js"}))                     // Rename the stream
@@ -96,20 +98,29 @@ gulp.task('server', /*['checksums'],*/ function() {
         .pipe(gulp.dest(server + '/img'));
 
     gulp.src(source.substorage)
-        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
+        .pipe(replace('ZZZZ', year))                            // Replace year in subdomain references
+        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off subdomain references
         .pipe(minifyHTML({empty: true}))                        // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
         .pipe(minifyInline())
         .pipe(gulp.dest(server));
 
-    return gulp.src(source.index)
+    gulp.src(source.index)
         .pipe(gulp.dest(server))                                // Necessary to set the path so injection works correctly.
-        .pipe(replace(/<base href=.*>/, '<base href="https://moon.zombull.xyz/">'))
-        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off any subdomain reference
+        .pipe(replace('ZZZZ', year))                            // Replace year in subdomain references
+        .pipe(replace('xyz:3000', 'xyz'))                       // Strip port off subdomain references
         .pipe(replace('ng-app', 'ng-strict-di ng-app'))
         .pipe(inject(css, {relative: true, addPrefix: 'static', transform: checksum}))
         .pipe(inject(js, {relative: true, addPrefix: 'static', transform: checksum}))
         .pipe(minifyHTML({empty: true}))                        // Minify HTML.  The empty option tells minifyHTML to keep empty attributes.
         .pipe(gulp.dest(server));
+}
+
+// This is a rather large task, but it makes sense because we're injecting CSS and JS into index.html.
+// The overall amount of code is relatively small so it's not like it's taking a huge amount of time.
+// The alternative would be to duplicate generation of the CSS and JS paths
+gulp.task('server', /*['checksums'],*/ function() {
+    gulpYear('2016');
+    gulpYear('2017');
 });
 
 gulp.task('release', ['jshint', 'server']);

@@ -4,7 +4,7 @@
 moon.factory('userdata', function ($q, bug, storage, drive) {
     'use strict';
 
-    var USER_DATA = 'zombull.moonboard.2017.userdata.json';
+    var USER_DATA = 'zombull.moonboard.ZZZZ.userdata.json';
     var USER_DATA_KEYS = ['projects', 'ticks', 'exiles'];
 
     var __drive = $q.defer();
@@ -93,13 +93,13 @@ moon.factory('userdata', function ($q, bug, storage, drive) {
                 },
                 function(error) {
                     __drive.reject();
-                    alert("Unabled to sync user data to Google Drive");
+                    alert("Unabled to sync " + USER_DATA + " to Google Drive");
                 }
             );
         },
         function(error) {
             __drive.reject();
-            alert("Unabled to retrieve user data from Google Drive");
+            alert("Unabled to retrieve " + USER_DATA + " from Google Drive");
         }
     );
 

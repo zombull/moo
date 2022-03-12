@@ -46,16 +46,18 @@ func (s *Server) newMoon(release bool, year string) *echo.Echo {
 }
 
 func (s *Server) Run(port string, release bool) {
-	s.store = NewStore(path.Join(s.cache, "moonboard"))
+	s.store = NewStore(s.cache, s.dir)
 
 	echoes := map[string]*echo.Echo{
-		"moon":     s.newMoon(release, ""),
 		"moon2016": s.newMoon(release, "2016"),
+		"moon2017": s.newMoon(release, "2017"),
+		"moon2019": s.newMoon(release, "2019"),
 	}
 
 	subs := map[string]string{
-		"dark":     "moonboard",
 		"dark2016": "moonboard2016",
+		"dark2017": "moonboard2017",
+		"dark2019": "moonboard2019",
 	}
 
 	// Server
