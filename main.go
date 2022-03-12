@@ -5,7 +5,6 @@ import (
 
 	"github.com/zombull/floating-castle/cmd"
 	"github.com/zombull/floating-castle/database"
-	"github.com/zombull/floating-castle/interactive"
 	"github.com/zombull/floating-castle/moonboard"
 )
 
@@ -18,9 +17,5 @@ func main() {
 		return d
 	}
 
-	if len(os.Args) == 1 {
-		interactive.Run(db())
-	} else {
-		cmd.Run(db, c.Cache, c.Server)
-	}
+	cmd.Run(db, c.Cache, c.Server)
 }
