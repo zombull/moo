@@ -16,9 +16,7 @@ import (
 type moonOpts struct {
 	d     *database.Database
 	cache string
-	all   bool
 	index bool
-	ticks bool
 }
 
 func moonCmd(db func() *database.Database, cache string) *cobra.Command {
@@ -35,9 +33,7 @@ func moonCmd(db func() *database.Database, cache string) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.all, "all", "a", false, "Sync both the Moonboard's index and ticks")
 	cmd.Flags().BoolVarP(&opts.index, "index", "i", false, "Sync the Moonboard's index")
-	cmd.Flags().BoolVarP(&opts.ticks, "ticks", "t", false, "Sync the Moonboard user's ticks")
 	return cmd
 }
 
@@ -60,14 +56,9 @@ func moon(opts *moonOpts) {
 		}
 	}
 
-	if opts.all || opts.index {
+	if opts.index {
 		onFiles("problems", func(data []byte) {
 			moonboard.SyncProblems(opts.d, data)
-		})
-	}
-	if opts.all || opts.ticks {
-		onFiles("ticks", func(data []byte) {
-			moonboard.SyncTicks(opts.d, data)
 		})
 	}
 }
