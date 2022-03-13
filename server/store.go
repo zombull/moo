@@ -205,7 +205,10 @@ func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
 		// collisions are cases where it's a single setter and only insert
 		// a new setter if they have a unique URL.  This is why append is
 		// used instead of directly indexing, and is also why Setters is
-		// created with a length of 0.
+		// created with a length of 0.  Note, this results in the setter
+		// indices not being stable across updates due to the database
+		// query not returning results sorted by setter Id (though the
+		// results are stable for a given instance).
 		if _, ok := md.Setters[e.Url]; !ok {
 			e.Id = len(md.Index.Setters)
 			md.Setters[e.Url] = e.Id
