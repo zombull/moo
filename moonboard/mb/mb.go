@@ -3,6 +3,7 @@ package mb
 type Setter struct {
 	Country   string `json:"Country"`
 	City      string `json:"City"`
+	Name      string `json:"-"`
 	Firstname string `json:"Firstname"`
 	Lastname  string `json:"Lastname"`
 	Nickname  string `json:"Nickname"`

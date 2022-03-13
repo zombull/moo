@@ -159,7 +159,7 @@ func getProblemUrl(s string) string {
 	ss := strings.Split(strings.Trim(s, "/"), "/")
 	s = ss[len(ss)-1]
 	bug.On(len(s) == 0, fmt.Sprintf("%d %v", len(ss), ss))
-	bug.On(s != strings.ToLower(s), "Moonboard has a case sensitive URL?")
+	bug.On(s != strings.ToLower(s), fmt.Sprintf("Moonboard has a case sensitive URL? '%s' != '%s", s, strings.ToLower(s)))
 	return s
 }
 
