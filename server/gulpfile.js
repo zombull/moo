@@ -121,6 +121,7 @@ function gulpYear(year) {
 gulp.task('server', /*['checksums'],*/ function() {
     gulpYear('2016');
     gulpYear('2017');
+    gulpYear('2019');
 });
 
 gulp.task('release', ['jshint', 'server']);
