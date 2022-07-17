@@ -33,12 +33,12 @@ var destination = {
     moo: 'release/moo',
 }
 
-gulp.task('clean', function() {
+gulp.task('clean', async function() {
     return del('release', {force: true});
 });
 
 // Run JS through jshint to find issues
-gulp.task('jshint', function() {
+gulp.task('jshint', async function() {
     var jsHintOptions = {
         eqnull: true,
         "-W018": true,
@@ -118,14 +118,12 @@ function gulpYear(year) {
 // This is a rather large task, but it makes sense because we're injecting CSS and JS into index.html.
 // The overall amount of code is relatively small so it's not like it's taking a huge amount of time.
 // The alternative would be to duplicate generation of the CSS and JS paths
-gulp.task('server', /*['checksums'],*/ function() {
+gulp.task('server', /*['checksums'],*/ async function() {
     gulpYear('2016');
     gulpYear('2017');
     gulpYear('2019');
 });
 
-gulp.task('release', ['jshint', 'server']);
+gulp.task('release', gulp.series('jshint', 'server'));
 
-gulp.task('default', [
-  'release'
-]);
+gulp.task('default', gulp.series('release'));
