@@ -24,7 +24,7 @@ type moonOpts struct {
 func moonCmd(db func() *database.Database, cache string) *cobra.Command {
 	opts := moonOpts{
 		d:     db(),
-		cache: path.Join(cache, "www.moonboard.com"),
+		cache: path.Join(cache, "source"),
 	}
 
 	cmd := &cobra.Command{
