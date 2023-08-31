@@ -139,7 +139,7 @@ type moonEntry struct {
 	Ascents       uint      `json:"a,omitempty"`
 	Benchmark     bool      `json:"b,omitempty"`
 	Comment       string    `json:"c,omitempty"`
-	MoonId        uint      `json:""`
+	MoonId        uint      `json:"-"`
 	RawDate       time.Time `json:"-"`
 }
 
