@@ -140,6 +140,7 @@ type moonEntry struct {
 	Ascents       uint      `json:"a,omitempty"`
 	Benchmark     bool      `json:"b,omitempty"`
 	Comment       string    `json:"c,omitempty"`
+	MoonUrl       string    `json:"moon"`
 	MoonId        uint      `json:"-"`
 	RawDate       time.Time `json:"-"`
 }
@@ -246,6 +247,7 @@ func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
 			Benchmark:     r.Benchmark,
 			Comment:       r.Comment,
 			MoonId:        r.Length,
+			MoonUrl:       strconv.Itoa(int(r.Length)),
 			RawDate:       r.Date,
 		}
 

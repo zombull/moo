@@ -168,6 +168,16 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
                     getProblem(data, problemUrl).p = null;
                     userdata.rm('projects', data, problemUrl).sync();
                 });
+            },
+            migrate: function(problemUrl, scope) {
+                getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems', 'projects'], []);
+
+                    var prob = getProblem(data, problemUrl);
+                    var mig = data.projects[problemUrl];
+                    userdata.rm('projects', data, problemUrl).sync();
+                    userdata.add('projects', data, prob.moon, mig).sync();
+                });
             }
         },
         tick: {
@@ -192,6 +202,16 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
                     getProblem(data, problemUrl).t = null;
                     userdata.rm('ticks', data, problemUrl).sync();
                 });
+            },
+            migrate: function(problemUrl, scope) {
+                getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems', 'ticks'], []);
+
+                    var prob = getProblem(data, problemUrl);
+                    var mig = data.ticks[problemUrl];
+                    userdata.rm('ticks', data, problemUrl).sync();
+                    userdata.add('ticks', data, prob.moon, mig).sync();
+                });
             }
         },
         exile: {
@@ -207,6 +227,16 @@ moon.factory('database', function ($http, $q, bug, grades, storage, userdata, sc
                     assertUserData(data, problemUrl, ['problems', 'exiles'], ['ticks']);
                     getProblem(data, problemUrl).e = false;
                     userdata.rm('exiles', data, problemUrl).sync();
+                });
+            },
+            migrate: function(problemUrl, scope) {
+                getData(scope, function(data) {
+                    assertUserData(data, problemUrl, ['problems', 'exiles'], []);
+
+                    var prob = getProblem(data, problemUrl);
+                    var mig = data.exiles[problemUrl];
+                    userdata.rm('exiles', data, problemUrl).sync();
+                    userdata.add('exiles', data, prob.moon, mig).sync();
                 });
             }
         }

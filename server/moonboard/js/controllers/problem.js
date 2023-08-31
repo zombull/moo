@@ -27,6 +27,19 @@ moon.controller('ProblemController', function ProblemController($scope, $timeout
 
     database.all(function(data) {
         var problemUrl = $routeParams.problem;
+
+        if (problemUrl === 'upgradenowjackass') {
+            for (var tkey in data.ticks) {
+                database.tick.migrate(tkey, $scope);
+            }
+            for (var pkey in data.projects) {
+                database.project.migrate(pkey, $scope);
+            }
+            for (var ekey in data.exiles) {
+                database.exile.migrate(ekey, $scope);
+            }
+            return;
+        }
         if (!data.problems.hasOwnProperty(problemUrl)) {
             $scope.error = $scope.error || { status: 404, data: 'The problem "' + problemUrl + '" does not exist.' };
             return;
