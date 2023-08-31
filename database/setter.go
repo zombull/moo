@@ -9,27 +9,16 @@ import (
 
 type Setter struct {
 	Id       int64  `yaml:"-"`
-	CragId   int64  `yaml:"-"`
 	Name     string `yaml:"name"`
 	Nickname string `yaml:"nickname"`
-	Country  string `json:"country"`
-	City     string `json:"city"`
-	Inactive bool   `yaml:"inactive"`
-	Comment  string `yaml:"name"`
 }
 
 const SETTER_SCHEMA string = `
 CREATE TABLE IF NOT EXISTS setters (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	crag_id INTEGER NOT NULL,
 	name TEXT NOT NULL,
 	nickname TEXT,
-	country TEXT NOT NULL,
-	city TEXT NOT NULL,
-	inactive BOOLEAN NOT NULL,
-	comment TEXT,
-	FOREIGN KEY (crag_id) REFERENCES crags (id),
-	UNIQUE (crag_id, name)
+	UNIQUE (name)
 );
 `
 
@@ -42,7 +31,7 @@ func (s *Setter) setId(id int64) {
 }
 
 func (s *Setter) setSideOneId(id int64) {
-	s.CragId = id
+	bug.Bug("Double LP is only for Problem+Holds")
 }
 
 func (s *Setter) table() string {
@@ -50,11 +39,11 @@ func (s *Setter) table() string {
 }
 
 func (s *Setter) keys() []string {
-	return []string{"crag_id", "name", "nickname", "country", "city", "inactive", "comment"}
+	return []string{"name", "nickname"}
 }
 
 func (s *Setter) values() []interface{} {
-	return []interface{}{s.CragId, s.Name, s.Nickname, s.Country, s.City, s.Inactive, s.Comment}
+	return []interface{}{s.Name, s.Nickname}
 }
 
 func (d *Database) DeleteSetter(id int64) {
@@ -69,13 +58,8 @@ func (d *Database) scanSetters(r *sql.Rows) []*Setter {
 		s := Setter{}
 		err := r.Scan(
 			&s.Id,
-			&s.CragId,
 			&s.Name,
 			&s.Nickname,
-			&s.Country,
-			&s.City,
-			&s.Inactive,
-			&s.Comment,
 		)
 		bug.OnError(err)
 		setters = append(setters, &s)
@@ -84,23 +68,23 @@ func (d *Database) scanSetters(r *sql.Rows) []*Setter {
 	return setters
 }
 
-func (d *Database) FindSetter(cragId int64, name string) *Setter {
-	r := d.query(`SELECT * FROM setters WHERE crag_id=? AND name=?`, []interface{}{cragId, name})
-	a := d.scanSetters(r)
-	if len(a) == 0 {
+func (d *Database) FindSetter(name string) *Setter {
+	r := d.query(`SELECT * FROM setters WHERE name=?`, []interface{}{name})
+	s := d.scanSetters(r)
+	if len(s) == 0 {
 		return nil
 	}
-	return a[0]
+	return s[0]
 }
 
 func (d *Database) GetSetter(id int64) *Setter {
 	r := d.query(`SELECT * FROM setters WHERE id=?`, []interface{}{id})
-	a := d.scanSetters(r)
-	bug.On(len(a) == 0, sql.ErrNoRows.Error())
-	return a[0]
+	s := d.scanSetters(r)
+	bug.On(len(s) == 0, sql.ErrNoRows.Error())
+	return s[0]
 }
 
-func (d *Database) GetSetters(cragId int64) []*Setter {
-	r := d.query(`SELECT * FROM setters WHERE crag_id=?`, []interface{}{cragId})
+func (d *Database) GetSetters() []*Setter {
+	r := d.query(`SELECT * FROM setters`, []interface{}{})
 	return d.scanSetters(r)
 }

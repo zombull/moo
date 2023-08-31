@@ -7,12 +7,12 @@ import (
 )
 
 type Holds struct {
-	RouteId int64    `yaml:"-"`
+	ProblemId int64  `yaml:"-"`
 	Holds   []string `yaml:"holds"`
 }
 
 var HoldKeys = []string{
-	"route_id",
+	"problem_id",
 	"h1",
 	"h2",
 	"h3",
@@ -41,7 +41,7 @@ var HoldKeys = []string{
 
 const HOLDS_SCHEMA = `
 CREATE TABLE IF NOT EXISTS holds (
-	route_id INTEGER PRIMARY KEY,
+	problem_id INTEGER PRIMARY KEY,
 	h1 TEXT NOT NULL,
 	h2 TEXT NOT NULL,
 	h3 TEXT,
@@ -66,19 +66,19 @@ CREATE TABLE IF NOT EXISTS holds (
 	h22 TEXT,
 	h23 TEXT,
 	h24 TEXT,
-	FOREIGN KEY (route_id) REFERENCES routes (id)
+	FOREIGN KEY (problem_id) REFERENCES problems (id)
 );`
 
 func (h *Holds) id() int64 {
-	return h.RouteId
+	return h.ProblemId
 }
 
 func (h *Holds) setSideOneId(id int64) {
-	h.RouteId = id
+	h.ProblemId = id
 }
 
 func (h *Holds) setId(id int64) {
-	h.RouteId = id
+	h.ProblemId = id
 }
 
 func (h *Holds) table() string {
@@ -93,7 +93,7 @@ func (h *Holds) values() []interface{} {
 	values := make([]interface{}, len(HoldKeys))
 	for i := range HoldKeys {
 		if i == 0 {
-			values[i] = h.RouteId
+			values[i] = h.ProblemId
 		} else if i-1 < len(h.Holds) {
 			values[i] = h.Holds[i-1]
 		}
@@ -138,7 +138,7 @@ func (d *Database) scanHolds(r *sql.Rows) *Holds {
 		)
 		bug.OnError(err)
 
-		h := &Holds{RouteId: id, Holds: make([]string, 0, 2)}
+		h := &Holds{ProblemId: id, Holds: make([]string, 0, 2)}
 		for i := range HoldKeys {
 			if i != 0 && s[i-1].Valid {
 				h.Holds = append(h.Holds, s[i-1].String)
@@ -150,7 +150,7 @@ func (d *Database) scanHolds(r *sql.Rows) *Holds {
 }
 
 func (d *Database) GetHolds(id int64) *Holds {
-	q := "SELECT * FROM holds WHERE route_id=?"
+	q := "SELECT * FROM holds WHERE problem_id=?"
 	h := d.query(q, []interface{}{id})
 	holds := d.scanHolds(h)
 	bug.On(holds == nil, sql.ErrNoRows.Error())

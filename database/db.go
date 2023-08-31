@@ -10,17 +10,6 @@ import (
 	"github.com/zombull/moo/bug"
 )
 
-var TableTypes = Set{
-	"crag":   xx,
-	"gym":    xx,
-	"area":   xx,
-	"wall":   xx,
-	"setter": xx,
-	"route":  xx,
-	"tick":   xx,
-	"list":   xx,
-}
-
 var insertValues = map[int]string{
 	1:  "?",
 	2:  "?, ?",
@@ -71,7 +60,7 @@ type DoubleLP struct {
 	Side2 SideTwo
 }
 
-const SCHEMA string = CRAG_SCHEMA + AREA_SCHEMA + ROUTE_SCHEMA + HOLDS_SCHEMA + TICK_SCHEMA + LIST_SCHEMA + SETTER_SCHEMA
+const SCHEMA string = SET_SCHEMA + PROBLEM_SCHEMA + HOLDS_SCHEMA + SETTER_SCHEMA
 
 func Init(path string) *Database {
 	timeout := 5 // TODO - make this command-line configurable?

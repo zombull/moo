@@ -19,7 +19,6 @@ import (
 
 	"github.com/zombull/moo/bug"
 	"github.com/zombull/moo/database"
-	"github.com/zombull/moo/moonboard"
 )
 
 type KeyValueStore struct {
@@ -140,7 +139,7 @@ type moonEntry struct {
 	Ascents       uint      `json:"a,omitempty"`
 	Benchmark     bool      `json:"b,omitempty"`
 	Comment       string    `json:"c,omitempty"`
-	MoonId        uint      `json:"-"`
+	MoonId        uint      `json:""`
 	RawDate       time.Time `json:"-"`
 }
 
@@ -155,34 +154,20 @@ type moonData struct {
 	Images   []string
 }
 
-func getProblemUrl(s string) string {
-	ss := strings.Split(strings.Trim(s, "/"), "/")
-	s = ss[len(ss)-1]
-	bug.On(len(s) == 0, fmt.Sprintf("%d %v", len(ss), ss))
-	bug.On(s != strings.ToLower(s), fmt.Sprintf("Moonboard has a case sensitive URL? '%s' != '%s", s, strings.ToLower(s)))
-	return s
-}
-
 func getSetterUrl(s string) string {
 	return "s/" + url.PathEscape(sanitize(s))
 }
 
-func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
-	cragId := moonboard.CragId(d)
+func (s *KeyValueStore) Update(d *database.Database, set *database.Set) {
+	setters := d.GetSetters()
+	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found"))
 
-	setters := d.GetSetters(cragId)
-	bug.On(len(setters) == 0, fmt.Sprintf("No moonboard setters found: %d", cragId))
-
-	routes := d.GetRoutes(cragId, area.Id)
-	if (len(routes) == 0 && area.Name == "MoonBoard 2019") {
-		return
-	}
-
-	bug.On(len(routes) == 0, fmt.Sprintf("No moonboard routes found: %d %d", cragId, area.Id))
+	problems := d.GetProblems(set.Id)
+	bug.On(len(problems) == 0, fmt.Sprintf("No moonboard problems found for '%s'", set.Name))
 
 	md := moonData{
 		Index: moonIndex{
-			Problems: make([]moonEntry, len(routes)),
+			Problems: make([]moonEntry, len(problems)),
 			Setters:  make([]moonEntry, 0, len(setters)),
 		},
 		Problems: make(map[string]int),
@@ -216,37 +201,38 @@ func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
 		}
 	}
 
-	sort.Slice(routes, func(i, j int) bool {
-		p1 := routes[i]
-		p2 := routes[j]
+	sort.Slice(problems, func(i, j int) bool {
+		p1 := problems[i]
+		p2 := problems[j]
 
 		// Note that the return is inverted from what might be expected
 		// by a "Less" function, as we effectively want a reverse sort,
 		// e.g. higher stars and ascents at the front of the list.  And
-		// don't forget that Pitches is actualy Ascents, we're sorting
-		// routes from the database, not the Moonboard specific problems.
-		return (p1.Stars * p1.Stars * p1.Pitches) > (p2.Stars * p2.Stars * p2.Pitches)
+		// we're sorting problems from the database, not the Moonboard
+		// specific problems.
+		return (p1.Stars * p1.Stars * p1.Ascents) > (p2.Stars * p2.Stars * p2.Ascents)
 	})
 
-	for i, r := range routes {
+	for i, r := range problems {
 		sn := d.GetSetter(r.SetterId).Name
 		setter, ok := md.Setters[getSetterUrl(d.GetSetter(r.SetterId).Name)]
 		bug.On(!ok, fmt.Sprintf("Moonboard problem has undefined setter: %s", sn))
 
+		var date time.Time = time.Unix(r.Date, 0)
+
 		e := moonEntry{
-			Url:           getProblemUrl(r.Url),
+			Url:           strconv.Itoa(int(r.MoonId)),
 			Name:          r.Name,
 			LowerCaseName: strings.ToLower(r.Name),
-			Date:          r.Date.Format("2006-01-02"), // 'yyyy-MM-dd'
+			Date:          date.Format("2006-01-02"), // 'yyyy-MM-dd'
 			Setter:        setter,
 			Grade:         r.Grade,
 			Stars:         r.Stars,
 			Id:            i,
-			Ascents:       r.Pitches,
+			Ascents:       r.Ascents,
 			Benchmark:     r.Benchmark,
-			Comment:       r.Comment,
-			MoonId:        r.Length,
-			RawDate:       r.Date,
+			MoonId:        r.MoonId,
+			RawDate:       date,
 		}
 
 		holdMap := make(map[string]bool)
@@ -274,28 +260,7 @@ func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
 		bug.On(len(start) == 0, fmt.Sprintf("%s: No start hold found", r.Name))
 		bug.On(len(finish) == 0, fmt.Sprintf("%s: No finish hold found", r.Name))
 
-		if existing, ok := md.Problems[e.Url]; ok {
-			ex := &md.Index.Problems[existing]
-			before := ex.RawDate.Before(e.RawDate)
-			if ex.RawDate.Equal(e.RawDate) {
-				bug.On(ex.MoonId == e.MoonId, fmt.Sprintf("Duplicate Moonboard problem: %s, %d and %d\n", e.Url, ex.MoonId, e.MoonId))
-				before = ex.MoonId < e.MoonId
-			}
-			if before {
-				e.Url = fmt.Sprintf("%d-%s", e.MoonId, e.Url)
-				_, ok = md.Problems[e.Url]
-				bug.On(ok, fmt.Sprintf("Duplicate Moonboard problem URL: %s", e.Url))
-				fmt.Printf("Duplicate Moonboard problem, new URL: %s\n", e.Url)
-			} else {
-				ex.Url = fmt.Sprintf("%d-%s", ex.MoonId, ex.Url)
-				_, ok = md.Problems[ex.Url]
-				bug.On(ok, fmt.Sprintf("Duplicate Moonboard problem URL: %s", ex.Url))
-				md.Problems[ex.Url] = existing
-				fmt.Printf("Duplicate Moonboard problem, updated existing URL: %s\n", ex.Url)
-			}
-		}
 		md.Problems[e.Url] = i
-
 		md.Index.Problems[i] = e
 		md.Index.Setters[setter].Problems = append(md.Index.Setters[setter].Problems, i)
 	}
@@ -324,7 +289,7 @@ func (s *KeyValueStore) Update(d *database.Database, area *database.Area) {
 
 	sums := make(map[string][]byte)
 
-	prefix := strings.Replace(strings.ToLower(area.Name), " ", "", -1)
+	prefix := strings.Replace(strings.ToLower(set.Name), " ", "", -1)
 	s.export(prefix, "index.problems", s.cache, md.Index.Problems, sums)
 	s.export(prefix, "index.setters", s.cache, md.Index.Setters, sums)
 	s.export(prefix, "images", s.cache, md.Images, sums)

@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/zombull/moo/database"
-	"github.com/zombull/moo/moonboard"
 	"github.com/zombull/moo/server"
 )
 
@@ -37,8 +36,8 @@ func cache(opts *cacheOpts) {
 
 	store := server.NewStore(opts.cache, opts.server)
 
-	areas := d.GetAreas(moonboard.CragId(d))
-	for _, a := range areas {
+	sets := d.GetSets()
+	for _, a := range sets {
 		store.Update(opts.d, a)
 	}
 }

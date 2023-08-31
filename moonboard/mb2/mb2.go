@@ -47,6 +47,7 @@ type Problem struct {
 	Ascents		uint	`json:"Repeats"`
 	Setter		string	`json:"Setby"`
 	SetbyId		string	`json:"SetbyId"` // UUID
+	SetupId		uint	`json:"SetupId"`
 	UserGrade	string	`json:"UserGrade"`
 	Stars		uint	`json:"UserRating"`
 }
