@@ -23,6 +23,10 @@ func (s *Set) id() int64 {
 	return s.Id
 }
 
+func (s *Set) idName() string {
+	return "id"
+}
+
 func (s *Set) setId(id int64) {
 	s.Id = id
 }

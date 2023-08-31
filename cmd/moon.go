@@ -14,6 +14,7 @@ import (
 type moonOpts struct {
 	db     func() *database.Database
 	source string
+	purge  bool
 }
 
 func moonCmd(db func() *database.Database, cache string) *cobra.Command {
@@ -29,15 +30,22 @@ func moonCmd(db func() *database.Database, cache string) *cobra.Command {
 			moon(&opts)
 		},
 	}
+	cmd.Flags().BoolVarP(&opts.purge, "purge", "p", false, "Purge (temporary)")
 	return cmd
 }
 
 func moon(opts *moonOpts) {
+	d := opts.db()
+
+	if (opts.purge) {
+		moonboard.Purge(d)
+		return
+	}
 	problems, err := ioutil.ReadFile(path.Join(opts.source, "Problem.json"))
 	bug.OnError(err)
 
 	holds, err := ioutil.ReadFile(path.Join(opts.source, "Move.json"))
 	bug.OnError(err)
 
-	moonboard.SyncProblemsJSONv2(opts.db(), problems, holds)
+	moonboard.SyncProblemsJSONv2(d, problems, holds)
 }

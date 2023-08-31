@@ -239,6 +239,133 @@ var renames = map[string]*rename{
 	"ACG23 - Easy": { Name: "ACG23 - EASY", ApiId: 309580},
 }
 
+var still_useful = map[uint]bool{
+	88047: true,
+	162380: true,
+	165950: true,
+	260791: true,
+	274976: true,
+	308347: true,
+	308908: true,
+	309200: true,
+	309578: true,
+	309703: true,
+	309777: true,
+	309927: true,
+	309985: true,
+	310114: true,
+	310145: true,
+	310803: true,
+	310807: true,
+	310894: true,
+	310947: true,
+	310959: true,
+	311110: true,
+	311194: true,
+	311921: true,
+	311940: true,
+	312340: true,
+	312492: true,
+	312593: true,
+	312767: true,
+	312953: true,
+	313079: true,
+	313210: true,
+	313284: true,
+	313306: true,
+	313642: true,
+	313665: true,
+	313726: true,
+	313748: true,
+	313750: true,
+	313754: true,
+	313770: true,
+	314490: true,
+	314722: true,
+	314776: true,
+	314923: true,
+	314960: true,
+	314962: true,
+	315060: true,
+	315095: true,
+	315716: true,
+	315893: true,
+	316071: true,
+	316072: true,
+	316148: true,
+	316189: true,
+	316479: true,
+	316714: true,
+	316745: true,
+	316782: true,
+	317014: true,
+	317247: true,
+	317462: true,
+	317925: true,
+	318284: true,
+	318672: true,
+	318787: true,
+	319211: true,
+	319641: true,
+	319714: true,
+	320123: true,
+	320258: true,
+	320529: true,
+	320770: true,
+	320898: true,
+	320906: true,
+	320980: true,
+	321143: true,
+	321328: true,
+	321443: true,
+	321771: true,
+	322221: true,
+	322609: true,
+	322917: true,
+	323688: true,
+	325338: true,
+	325963: true,
+	326490: true,
+	327503: true,
+	328204: true,
+	328572: true,
+	328635: true,
+	329408: true,
+	329937: true,
+	331169: true,
+	331233: true,
+	331766: true,
+	331801: true,
+	331802: true,
+	331803: true,
+	332830: true,
+	334842: true,
+	335478: true,
+	336226: true,
+	338306: true,
+	338570: true,
+	338856: true,
+	341672: true,
+	341731: true,
+	343877: true,
+	344558: true,
+	345685: true,
+	358592: true,
+}
+
+func isUseless(moonId, ascents uint, benchmark bool, setter string) bool {
+	if ascents > 3 || benchmark {
+		return false
+	}
+	if _, ok := still_useful[moonId]; ok {
+		return false
+	}
+	if setter == "Kyle Knapp" {
+		return false
+	}
+	return true
+}
+
 func SyncProblemsJSONv2(d *database.Database, problemsData, holdsData []byte) {
 	var problemsV2 []mb2.Problem
 	err := json.Unmarshal(problemsData, &problemsV2)
@@ -299,6 +426,10 @@ func SyncProblemsJSONv2(d *database.Database, problemsData, holdsData []byte) {
 
 	for i, p := range problems {
 		bug.On(p.ApiId == 0 || len(p.Name) == 0, fmt.Sprintf("Problem '%d' is empty", i))
+
+		if isUseless(p.ApiId, p.Ascents, p.Benchmark, p.Setter.Name) {
+			continue
+		}
 	
 		setupId := problemsV2[i].SetupId
 		if setupId == 4 {
@@ -315,4 +446,24 @@ func SyncProblemsJSONv2(d *database.Database, problemsData, holdsData []byte) {
 	syncProblemsJSON(d, "2016", problems2016)
 	syncProblemsJSON(d, "2017", problems2017)
 	syncProblemsJSON(d, "2019", problems2019)
+}
+
+
+
+func purge(d *database.Database, setYear string) {
+	problems := d.GetProblems(SetId(d, "MoonBoard " + setYear))
+
+	for _, p := range problems {
+		if isUseless(p.MoonId, p.Ascents, p.Benchmark, d.GetSetter(p.SetterId).Name) {
+			fmt.Printf("DELETE %s\n", p.Name)
+			d.Delete(d.GetHolds(p.Id))
+			d.Delete(p)
+		}
+	}
+}
+
+func Purge(d *database.Database) {
+	purge(d, "2016")
+	purge(d, "2017")
+	purge(d, "2019")
 }

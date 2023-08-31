@@ -73,6 +73,10 @@ func (h *Holds) id() int64 {
 	return h.ProblemId
 }
 
+func (h *Holds) idName() string {
+	return "problem_id"
+}
+
 func (h *Holds) setSideOneId(id int64) {
 	h.ProblemId = id
 }

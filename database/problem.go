@@ -50,6 +50,10 @@ func (p *Problem) id() int64 {
 	return p.Id
 }
 
+func (p *Problem) idName() string {
+	return "id"
+}
+
 func (p *Problem) setId(id int64) {
 	p.Id = id
 }

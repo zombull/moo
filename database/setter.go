@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/zombull/moo/bug"
 )
@@ -26,6 +25,10 @@ func (s *Setter) id() int64 {
 	return s.Id
 }
 
+func (s *Setter) idName() string {
+	return "id"
+}
+
 func (s *Setter) setId(id int64) {
 	s.Id = id
 }
@@ -44,10 +47,6 @@ func (s *Setter) keys() []string {
 
 func (s *Setter) values() []interface{} {
 	return []interface{}{s.Name, s.Nickname}
-}
-
-func (d *Database) DeleteSetter(id int64) {
-	panic(fmt.Errorf("DeleteSetter not yet implemented"))
 }
 
 func (d *Database) scanSetters(r *sql.Rows) []*Setter {

@@ -46,6 +46,7 @@ type Database struct {
 
 type Record interface {
 	id() int64
+	idName() string
 	setId(int64)
 	table() string
 	keys() []string
@@ -215,7 +216,7 @@ func (d *Database) Update(r Record) {
 }
 
 func (d *Database) Delete(r Record) {
-	q := fmt.Sprintf(`DELETE FROM %s WHERE id=%d`, r.table(), r.id())
+	q := fmt.Sprintf(`DELETE FROM %s WHERE %s=%d`, r.table(), r.idName(), r.id())
 	d.transact(q, false)
 }
 
