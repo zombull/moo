@@ -12,13 +12,13 @@ import (
 )
 
 type moonOpts struct {
-	d      *database.Database
+	db     func() *database.Database
 	source string
 }
 
 func moonCmd(db func() *database.Database, cache string) *cobra.Command {
 	opts := moonOpts{
-		d:      db(),
+		db:     db,
 		source: path.Join(cache, "source"),
 	}
 
@@ -39,5 +39,5 @@ func moon(opts *moonOpts) {
 	holds, err := ioutil.ReadFile(path.Join(opts.source, "Move.json"))
 	bug.OnError(err)
 
-	moonboard.SyncProblemsJSONv2(opts.d, problems, holds)
+	moonboard.SyncProblemsJSONv2(opts.db(), problems, holds)
 }

@@ -8,14 +8,14 @@ import (
 )
 
 type cacheOpts struct {
-	d      *database.Database
+	db     func() *database.Database
 	cache  string
 	server string
 }
 
 func cacheCmd(db func() *database.Database, c, s string) *cobra.Command {
 	opts := cacheOpts{
-		d:      db(),
+		db:     db,
 		cache:  c,
 		server: s,
 	}
@@ -32,12 +32,12 @@ func cacheCmd(db func() *database.Database, c, s string) *cobra.Command {
 }
 
 func cache(opts *cacheOpts) {
-	d := opts.d
+	d := opts.db()
 
 	store := server.NewStore(opts.cache, opts.server)
 
 	sets := d.GetSets()
 	for _, a := range sets {
-		store.Update(opts.d, a)
+		store.Update(d, a)
 	}
 }
