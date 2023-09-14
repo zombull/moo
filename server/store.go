@@ -118,25 +118,54 @@ type holds struct {
 	Finish int    `json:"f"`
 }
 
-// moonEntry holds the actual data for a problem or a setter.
-// Keep them in the same object even though many of the fields
-// are unique to one or the other, as some parts of the code
-// works with both problems and setters and so the JSON names
-// need to be identical for common fields and distinct for unique
-// fields.
-type moonEntry struct {
+// moonProblem and moonSetter hold the actual data for a problem or a
+// setter.  Define a common object purely to detect overlap, which must
+// be avoided as some parts of the code work with both problems and
+// setters.  The JSON names need to be identical for common fields and
+// distinct for unique fields.  Using omitempty gets dangerous because
+// valid, required values, e.g. '0', will get dropped :-(
+type moonEntryCommon struct {
 	Url           string    `json:"u"`
 	Name          string    `json:"n"`
 	LowerCaseName string    `json:"l"`
 	Id            int       `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
-	Date          string    `json:"d,omitempty"`
+
 	Nickname      string    `json:"k,omitempty"`
-	Holds         string    `json:"h,omitempty"`
-	Problems      []int     `json:"p,omitempty"`
-	Setter        int       `json:"r,omitempty"`
-	Grade         string    `json:"g,omitempty"`
-	Stars         uint      `json:"s,omitempty"`
-	Ascents       uint      `json:"a,omitempty"`
+	Problems      []int     `json:"p"`
+	Date          string    `json:"d"`
+	Holds         string    `json:"h"`
+	Setter        int       `json:"r"`
+	Grade         string    `json:"g"`
+	Stars         uint      `json:"s"`
+	Ascents       uint      `json:"a"`
+	Benchmark     bool      `json:"b,omitempty"`
+	Comment       string    `json:"c,omitempty"`
+	MoonId        uint      `json:"-"`
+	RawDate       time.Time `json:"-"`
+}
+
+type moonSetter struct {
+	Url           string    `json:"u"`
+	Name          string    `json:"n"`
+	LowerCaseName string    `json:"l"`
+	Id            int       `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
+
+	Nickname      string    `json:"k,omitempty"`
+	Problems      []int     `json:"p"`
+}
+
+type moonProblem struct {
+	Url           string    `json:"u"`
+	Name          string    `json:"n"`
+	LowerCaseName string    `json:"l"`
+	Id            int       `json:"i"` // index into [Problem|Setter]Data, not database ID or moonboard ID
+
+	Date          string    `json:"d"`
+	Holds         string    `json:"h"`
+	Setter        int       `json:"r"`
+	Grade         string    `json:"g"`
+	Stars         uint      `json:"s"`
+	Ascents       uint      `json:"a"`
 	Benchmark     bool      `json:"b,omitempty"`
 	Comment       string    `json:"c,omitempty"`
 	MoonId        uint      `json:"-"`
@@ -144,8 +173,8 @@ type moonEntry struct {
 }
 
 type moonIndex struct {
-	Problems []moonEntry
-	Setters  []moonEntry
+	Problems []moonProblem
+	Setters  []moonSetter
 }
 type moonData struct {
 	Index    moonIndex
@@ -167,8 +196,8 @@ func (s *KeyValueStore) Update(d *database.Database, set *database.Set) {
 
 	md := moonData{
 		Index: moonIndex{
-			Problems: make([]moonEntry, len(problems)),
-			Setters:  make([]moonEntry, 0, len(setters)),
+			Problems: make([]moonProblem, len(problems)),
+			Setters:  make([]moonSetter, 0, len(setters)),
 		},
 		Problems: make(map[string]int),
 		Setters:  make(map[string]int),
@@ -176,7 +205,7 @@ func (s *KeyValueStore) Update(d *database.Database, set *database.Set) {
 	}
 
 	for _, r := range setters {
-		e := moonEntry{
+		e := moonSetter{
 			Url:           getSetterUrl(r.Name),
 			Name:          r.Name,
 			Nickname:      r.Nickname,
@@ -220,7 +249,7 @@ func (s *KeyValueStore) Update(d *database.Database, set *database.Set) {
 
 		var date time.Time = time.Unix(r.Date, 0)
 
-		e := moonEntry{
+		e := moonProblem{
 			Url:           strconv.Itoa(int(r.MoonId)),
 			Name:          r.Name,
 			LowerCaseName: strings.ToLower(r.Name),
