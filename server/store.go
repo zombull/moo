@@ -230,6 +230,19 @@ func (s *KeyValueStore) Update(d *database.Database, set *database.Set) {
 		}
 	}
 
+	for _, r := range problems {
+		// Deduct two stars (give or take) in order to combat inflation.
+		// Do this before sorting, which takes the number of stars into
+		// account
+		if r.Stars < 2 {
+			r.Stars = 0;
+		} else if r.Stars < 4 {
+			r.Stars = 1;
+		} else {
+			r.Stars = r.Stars - 2;
+		}
+	}
+
 	sort.Slice(problems, func(i, j int) bool {
 		p1 := problems[i]
 		p2 := problems[j]
