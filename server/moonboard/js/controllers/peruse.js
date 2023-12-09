@@ -52,6 +52,11 @@ moon.controller('PeruseController', function PeruseController($scope, $location,
             __problems = __problems.filter(function(problem) {
                 return problem.p.s >= 2 || problem.p.a >= 4;
             });
+            __problems.sort(function(a, b) {
+		if (a.p.s === b.p.s)
+                    return b.p.a - a.p.a;
+                return b.p.s - a.p.s;
+            });
         } else if (showTicks) {
             __problems = problemsFromMap(data.ticks, data);
             __problems.sort(function(a, b) {
