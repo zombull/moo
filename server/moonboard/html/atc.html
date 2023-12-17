@@ -13,26 +13,26 @@
             <table cellpadding="0" cellspacing="6">
                 <tbody>
                     <tr><td><pre>&nbsp;&nbsp;<strong>/</strong>&nbsp;&nbsp;</pre></td><td>Activate the search bar if it's not currently focused.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@b | !b</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide benchmark problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@t | !t</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide ticked problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@p | !p</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide project problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@o | !o</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide todo problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@e | !e</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide exiled problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@u | !u</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide upgraded problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@d | !d</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide downgraded problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@h | h= $hold(,$hold)*</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide problems containing $hold, e.g. h=e9 or h=e9,d18.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.b | !b</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide benchmark problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.t | !t</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide ticked problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.p | !p</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide project problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.o | !o</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide todo problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.e | !e</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide exiled problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.u | !u</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide upgraded problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.d | !d</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide downgraded problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.h | h= $hold(,$hold)*</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide problems containing $hold, e.g. h=e9 or h=e9,d18.</td></tr>
                     <tr><td><pre>&nbsp;&nbsp;<strong>!h | h!= $hold(,$hold)*</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide problems not containing $hold, e.g. h!=h14 or h!=h14,h18.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@r | !r $setter</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide problems set by $setter.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@n</strong>&nbsp;&nbsp;</pre></td><td>Search setters instead of problems.</td></tr>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@ | = $grade</strong>&nbsp;&nbsp;</pre></td><td>Show problems matching $grade, e.g. @v5 or =v5.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>&lt;$grade</strong>&nbsp;&nbsp;</pre></td><td>Show problems no harder than $grade.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>&gt;$grade</strong>&nbsp;&nbsp;</pre></td><td>Show problems at least as hard as the $grade.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@a | a= $ascents</strong>&nbsp;&nbsp;</pre></td><td>Show problems with # of $ascents.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>a&lt;$ascents</strong>&nbsp;&nbsp;</pre></td><td>Show problems with fewer than # $ascents.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>a&gt;$ascents</strong>&nbsp;&nbsp;</pre></td><td>Show problems with at least # $ascents.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>@s | s= $stars</strong>&nbsp;&nbsp;</pre></td><td>Show problems with # of $stars.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>s&lt;$stars</strong>&nbsp;&nbsp;</pre></td><td>Show problems with fewer than # $stars.</td>
-                    <tr><td><pre>&nbsp;&nbsp;<strong>s&gt;$stars</strong>&nbsp;&nbsp;</pre></td><td>Show problems with at least # $stars.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.r | !r $setter</strong>&nbsp;&nbsp;</pre></td><td>Show|Hide problems set by $setter.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.n</strong>&nbsp;&nbsp;</pre></td><td>Search setters instead of problems.</td></tr>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>. | = $grade</strong>&nbsp;&nbsp;</pre></td><td>Show problems matching $grade, e.g. @v5 or =v5.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>..$grade</strong>&nbsp;&nbsp;</pre></td><td>Show problems no harder than $grade.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>$grade..</strong>&nbsp;&nbsp;</pre></td><td>Show problems at least as hard as the $grade.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.a | a= $ascents</strong>&nbsp;&nbsp;</pre></td><td>Show problems with # of $ascents.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>..a$ascents</strong>&nbsp;&nbsp;</pre></td><td>Show problems with fewer than # $ascents.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>a$ascents..</strong>&nbsp;&nbsp;</pre></td><td>Show problems with at least # $ascents.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>.s | s= $stars</strong>&nbsp;&nbsp;</pre></td><td>Show problems with # of $stars.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>..s$stars</strong>&nbsp;&nbsp;</pre></td><td>Show problems with fewer than # $stars.</td>
+                    <tr><td><pre>&nbsp;&nbsp;<strong>s$stars..</strong>&nbsp;&nbsp;</pre></td><td>Show problems with at least # $stars.</td>
                 </tbody>
             </table>
 
