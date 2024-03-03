@@ -86,7 +86,7 @@ func (s *KeyValueStore) getValue(host string) func(c echo.Context) error {
 
 func sanitize(s string) string {
 	return strings.ToLower(strings.Map(func(r rune) rune {
-		if unicode.IsSpace(r) {
+		if unicode.IsSpace(r) || r == '\'' || r == '"' {
 			return -1
 		}
 		return r
